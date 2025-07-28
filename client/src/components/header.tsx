@@ -1,14 +1,9 @@
-import { Search, Bell, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRefreshAll } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
-interface HeaderProps {
-  onSearchClick?: () => void;
-  onNotificationClick?: () => void;
-}
-
-export function Header({ onSearchClick, onNotificationClick }: HeaderProps) {
+export function Header() {
   const refreshAll = useRefreshAll();
   const { toast } = useToast();
 
@@ -35,15 +30,7 @@ export function Header({ onSearchClick, onNotificationClick }: HeaderProps) {
           <div className="text-blue-500 text-xl">🌬️</div>
           <h1 className="text-lg font-bold text-gray-900">Nepal Air</h1>
         </div>
-        <div className="flex items-center space-x-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onSearchClick}
-            className="rounded-full hover:bg-gray-100"
-          >
-            <Search className="h-5 w-5 text-gray-600" />
-          </Button>
+        <div className="flex items-center">
           <Button
             variant="ghost"
             size="icon"
@@ -52,14 +39,6 @@ export function Header({ onSearchClick, onNotificationClick }: HeaderProps) {
             className="rounded-full hover:bg-gray-100"
           >
             <RotateCcw className={`h-5 w-5 text-gray-600 ${refreshAll.isPending ? 'animate-spin' : ''}`} />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onNotificationClick}
-            className="rounded-full hover:bg-gray-100"
-          >
-            <Bell className="h-5 w-5 text-gray-600" />
           </Button>
         </div>
       </div>

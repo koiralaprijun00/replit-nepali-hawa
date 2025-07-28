@@ -3,18 +3,15 @@ import { Header } from "@/components/header";
 import { CityCard } from "@/components/city-card";
 import { BottomNav } from "@/components/bottom-nav";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { useCities } from "@/lib/api";
+import { useCities, type CityWithData } from "@/lib/api";
 import { useLocation } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Navigation } from "lucide-react";
+import { Navigation } from "lucide-react";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lon: number; name: string } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [currentLocationData, setCurrentLocationData] = useState<CityWithData | null>(null);
@@ -22,11 +19,6 @@ export default function Home() {
   
   const { data: cities, isLoading, error } = useCities();
   const { toast } = useToast();
-
-  const filteredCities = cities?.filter(city => {
-    const matchesSearch = city.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  }) || [];
 
   const fetchLocationData = async (lat: number, lon: number) => {
     setLoadingLocation(true);
@@ -71,21 +63,10 @@ export default function Home() {
     setLocation(`/city/${cityId}`);
   };
 
-  const handleNotificationClick = () => {
-    toast({
-      title: "Notifications",
-      description: "Notification settings coming soon!",
-    });
-  };
-
-  const handleMapClick = () => {
-    setLocation('/map');
-  };
-
   if (error) {
     return (
       <div className="max-w-sm mx-auto bg-white min-h-screen">
-        <Header onSearchClick={() => setShowSearch(!showSearch)} onNotificationClick={handleNotificationClick} />
+        <Header />
         <div className="p-4 text-center">
           <p className="text-red-500">Failed to load cities. Please try again.</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
@@ -99,33 +80,12 @@ export default function Home() {
 
   return (
     <div className="max-w-sm mx-auto bg-white min-h-screen relative">
-      <Header onSearchClick={() => setShowSearch(!showSearch)} onNotificationClick={handleNotificationClick} />
-      
-      {/* Search Bar */}
-      {showSearch && (
-        <div className="px-4 py-3 bg-white border-b border-gray-100">
-          <Input
-            placeholder="Search cities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
-        </div>
-      )}
+      <Header />
 
       {/* Header Section */}
       <div className="bg-white px-4 py-2 border-b border-gray-100">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-center items-center">
           <h2 className="text-lg font-semibold text-gray-900">Air Quality</h2>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleMapClick}
-            className="flex items-center space-x-1"
-          >
-            <MapPin className="h-4 w-4" />
-            <span>Map</span>
-          </Button>
         </div>
       </div>
 
@@ -229,37 +189,19 @@ export default function Home() {
                   </div>
                 </div>
               ))
-            ) : (
-              filteredCities.map((city) => (
+            ) : cities ? (
+              cities.map((city) => (
                 <div key={city.id} className="min-w-64">
                   <CityCard city={city} onCityClick={handleCityClick} />
                 </div>
               ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No cities available.</p>
+              </div>
             )}
           </div>
         </div>
-
-        {/* Search Results (when searching) */}
-        {showSearch && searchQuery && (
-          <div className="p-4 border-t border-gray-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Search Results</h3>
-            <div className="space-y-4">
-              {filteredCities.length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">No cities found matching your search.</p>
-                </div>
-              ) : (
-                filteredCities.map((city) => (
-                  <CityCard
-                    key={city.id}
-                    city={city}
-                    onCityClick={handleCityClick}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       <BottomNav />
