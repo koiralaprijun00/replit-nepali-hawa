@@ -73,7 +73,7 @@ export default function Rankings() {
           </div>
           <div className="text-right">
             <div 
-              className="text-2xl font-bold px-3 py-1 rounded-lg"
+              className="text-2xl font-bold px-3 py-1 rounded-lg pt-[3px] pb-[3px]"
               style={{ 
                 backgroundColor: aqiConfig.color,
                 color: aqiConfig.textColor 
