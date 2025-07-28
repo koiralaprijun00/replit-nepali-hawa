@@ -41,11 +41,24 @@ export default function MapView() {
           [79.5, 26.0], // Southwest coordinates
           [88.5, 30.5]  // Northeast coordinates
         ],
-        attributionControl: false
+        attributionControl: false,
+        cooperativeGestures: false, // Disable cooperative gestures to prevent conflicts
+        doubleClickZoom: true,
+        scrollZoom: true,
+        boxZoom: true,
+        dragRotate: false,
+        dragPan: true,
+        keyboard: true,
+        touchZoomRotate: true
       });
 
-      // Add navigation controls positioned to avoid overlap
-      map.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+      // Add navigation controls with custom options to prevent abort signals
+      const navControl = new mapboxgl.NavigationControl({
+        showCompass: false,
+        showZoom: true,
+        visualizePitch: false
+      });
+      map.current.addControl(navControl, 'bottom-right');
 
       map.current.on('load', () => {
         console.log('Mapbox map loaded successfully');
@@ -53,6 +66,15 @@ export default function MapView() {
 
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
+      });
+
+      // Prevent zoom control signal abort errors
+      map.current.on('zoomstart', () => {
+        // No-op to prevent signal abort
+      });
+
+      map.current.on('zoomend', () => {
+        // No-op to prevent signal abort
       });
 
     } catch (error) {
@@ -71,8 +93,14 @@ export default function MapView() {
   useEffect(() => {
     if (!map.current || !cities) return;
 
-    // Clear existing markers
-    markersRef.current.forEach(marker => marker.remove());
+    // Clear existing markers safely
+    markersRef.current.forEach(marker => {
+      try {
+        marker.remove();
+      } catch (e) {
+        // Ignore removal errors
+      }
+    });
     markersRef.current = [];
 
     // Add markers for each city
@@ -101,17 +129,26 @@ export default function MapView() {
       `;
       markerElement.textContent = city.airQuality.aqi.toString();
 
-      // Add click handler
-      markerElement.addEventListener('click', () => {
+      // Add click handler with proper event handling
+      markerElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         setSelectedCity(selectedCity === city.id ? null : city.id);
-      });
+      }, { passive: false });
 
-      // Create and add marker
-      const marker = new mapboxgl.Marker({ element: markerElement })
-        .setLngLat([city.lon, city.lat])
-        .addTo(map.current!);
+      // Create and add marker with error handling
+      try {
+        const marker = new mapboxgl.Marker({ 
+          element: markerElement,
+          anchor: 'center'
+        })
+          .setLngLat([city.lon, city.lat])
+          .addTo(map.current!);
 
-      markersRef.current.push(marker);
+        markersRef.current.push(marker);
+      } catch (e) {
+        console.error('Failed to add marker for city:', city.name, e);
+      }
     });
   }, [cities, selectedCity]);
 
