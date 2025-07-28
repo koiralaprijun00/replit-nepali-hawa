@@ -99,6 +99,35 @@ function getMainPollutant(components: any): string {
   ).name;
 }
 
+// Function to fetch initial data for all cities
+async function initializeCitiesData() {
+  try {
+    console.log('Initializing city data...');
+    const cities = await storage.getCities();
+    
+    // Fetch data for all cities in parallel
+    const promises = cities.map(async (city) => {
+      try {
+        const response = await fetch(`http://localhost:${process.env.PORT || 5000}/api/cities/${city.id}/refresh`, {
+          method: 'POST'
+        });
+        if (response.ok) {
+          console.log(`✓ Initialized data for ${city.name}`);
+        } else {
+          console.log(`✗ Failed to initialize data for ${city.name}`);
+        }
+      } catch (error) {
+        console.log(`✗ Error initializing ${city.name}:`, error instanceof Error ? error.message : 'Unknown error');
+      }
+    });
+    
+    await Promise.allSettled(promises);
+    console.log('City data initialization completed');
+  } catch (error) {
+    console.error('Error during city data initialization:', error);
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get all cities with their current air quality and weather data
@@ -465,5 +494,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Initialize city data after server setup but before returning
+  // Use setTimeout to avoid blocking server startup
+  setTimeout(async () => {
+    await initializeCitiesData();
+  }, 2000); // Wait 2 seconds for server to be fully ready
+  
   return httpServer;
 }
