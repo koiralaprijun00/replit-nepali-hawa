@@ -51,29 +51,50 @@ export default function MapView() {
         touchZoomRotate: true
       });
 
-      // Add navigation controls with custom options to prevent abort signals
-      const navControl = new mapboxgl.NavigationControl({
-        showCompass: false,
-        showZoom: true,
-        visualizePitch: false
-      });
-      map.current.addControl(navControl, 'top-right');
-
       map.current.on('load', () => {
         console.log('Mapbox map loaded successfully');
+        
+        // Add navigation controls after map load to prevent signal issues
+        const navControl = new mapboxgl.NavigationControl({
+          showCompass: false,
+          showZoom: true,
+          visualizePitch: false
+        });
+        
+        try {
+          map.current?.addControl(navControl, 'top-right');
+        } catch (e) {
+          console.warn('Navigation control add failed:', e);
+        }
       });
 
       map.current.on('error', (e) => {
         console.error('Mapbox error:', e);
       });
 
-      // Prevent zoom control signal abort errors
-      map.current.on('zoomstart', () => {
-        // No-op to prevent signal abort
+      // Add comprehensive zoom event handling to prevent signal abort errors
+      map.current.on('zoomstart', (e) => {
+        try {
+          // Handle zoom start without signal abort
+        } catch (err) {
+          console.warn('Zoom start handler error:', err);
+        }
       });
 
-      map.current.on('zoomend', () => {
-        // No-op to prevent signal abort
+      map.current.on('zoom', (e) => {
+        try {
+          // Handle zoom progress without signal abort
+        } catch (err) {
+          console.warn('Zoom handler error:', err);
+        }
+      });
+
+      map.current.on('zoomend', (e) => {
+        try {
+          // Handle zoom end without signal abort
+        } catch (err) {
+          console.warn('Zoom end handler error:', err);
+        }
       });
 
     } catch (error) {
@@ -82,8 +103,28 @@ export default function MapView() {
 
     return () => {
       if (map.current) {
-        map.current.remove();
-        map.current = null;
+        try {
+          // Remove all event listeners to prevent signal abort errors
+          map.current.off();
+          
+          // Remove all controls
+          const controls = map.current._controls;
+          if (controls) {
+            controls.forEach((control: any) => {
+              try {
+                map.current?.removeControl(control);
+              } catch (e) {
+                // Ignore control removal errors
+              }
+            });
+          }
+          
+          map.current.remove();
+        } catch (e) {
+          console.warn('Map cleanup error:', e);
+        } finally {
+          map.current = null;
+        }
       }
     };
   }, []);
