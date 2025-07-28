@@ -4,10 +4,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { BottomNav } from "@/components/bottom-nav";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import { useCities } from "@/lib/api";
 import { getAQILevel } from "@/lib/constants";
-import { Search, Layers, Navigation } from "lucide-react";
+import { Navigation } from "lucide-react";
 
 // Set Mapbox access token
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
@@ -15,8 +15,7 @@ mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 export default function MapView() {
   const { data: cities, isLoading } = useCities();
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
+
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markersRef = useRef<mapboxgl.Marker[]>([]);
@@ -152,22 +151,7 @@ export default function MapView() {
     });
   }, [cities, selectedCity]);
 
-  // Handle search highlighting
-  useEffect(() => {
-    if (!cities || !searchQuery) return;
 
-    const matchingCity = cities.find(city => 
-      city.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    if (matchingCity && map.current) {
-      map.current.flyTo({
-        center: [matchingCity.lon, matchingCity.lat],
-        zoom: 8,
-        duration: 1000
-      });
-    }
-  }, [searchQuery, cities]);
 
   if (isLoading) {
     return (
@@ -185,45 +169,7 @@ export default function MapView() {
       {/* Mapbox Container */}
       <div ref={mapContainer} className="h-screen w-full" style={{ position: 'relative' }} />
 
-      {/* Top Controls */}
-      <div className="absolute top-20 right-4 z-30 flex flex-col space-y-3">
-        <Button
-          variant="secondary"
-          size="icon"
-          className="bg-white/95 hover:bg-white shadow-lg rounded-xl border border-white/50"
-          onClick={() => setShowSearch(!showSearch)}
-        >
-          <Search className="h-5 w-5" />
-        </Button>
-        <Button
-          variant="secondary"
-          size="icon"
-          className="bg-white/95 hover:bg-white shadow-lg rounded-xl border border-white/50"
-          onClick={() => {
-            if (map.current) {
-              const style = map.current.getStyle().name;
-              const newStyle = style?.includes('satellite') 
-                ? 'mapbox://styles/mapbox/streets-v12'
-                : 'mapbox://styles/mapbox/satellite-streets-v12';
-              map.current.setStyle(newStyle);
-            }
-          }}
-        >
-          <Layers className="h-5 w-5" />
-        </Button>
-      </div>
 
-      {/* Search Bar */}
-      {showSearch && (
-        <div className="absolute top-4 left-4 right-4 z-30">
-          <Input
-            placeholder="Search Nepal cities..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-white/95 backdrop-blur-sm shadow-lg border border-white/50 rounded-xl"
-          />
-        </div>
-      )}
 
       {/* My Location Button */}
       <div className="absolute bottom-28 left-4 z-30">
