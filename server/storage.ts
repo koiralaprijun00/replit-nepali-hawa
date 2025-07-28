@@ -43,12 +43,53 @@ export class MemStorage implements IStorage {
 
   private async initializeNepalCities() {
     const nepalCities = [
+      // Bagmati Province
       { name: "Kathmandu", province: "Bagmati Province", lat: 27.7172, lon: 85.3240 },
+      { name: "Lalitpur", province: "Bagmati Province", lat: 27.6588, lon: 85.3247 },
+      { name: "Bhaktapur", province: "Bagmati Province", lat: 27.6710, lon: 85.4298 },
       { name: "Chitwan", province: "Bagmati Province", lat: 27.5291, lon: 84.3542 },
+      { name: "Hetauda", province: "Bagmati Province", lat: 27.4287, lon: 85.0324 },
+      { name: "Bharatpur", province: "Bagmati Province", lat: 27.6977, lon: 84.4354 },
+      
+      // Gandaki Province
       { name: "Pokhara", province: "Gandaki Province", lat: 28.2096, lon: 83.9856 },
-      { name: "Dhangadi", province: "Sudurpashchim Province", lat: 28.6931, lon: 80.5898 },
+      { name: "Gorkha", province: "Gandaki Province", lat: 28.0000, lon: 84.6333 },
+      { name: "Baglung", province: "Gandaki Province", lat: 28.2677, lon: 83.5899 },
+      { name: "Mustang", province: "Gandaki Province", lat: 28.9942, lon: 83.8821 },
+      
+      // Lumbini Province  
+      { name: "Butwal", province: "Lumbini Province", lat: 27.7000, lon: 83.4500 },
+      { name: "Bhairahawa", province: "Lumbini Province", lat: 27.5000, lon: 83.4167 },
+      { name: "Tansen", province: "Lumbini Province", lat: 27.8667, lon: 83.5500 },
+      { name: "Ghorahi", province: "Lumbini Province", lat: 28.0333, lon: 82.5000 },
+      { name: "Nepalgunj", province: "Lumbini Province", lat: 28.0500, lon: 81.6167 },
+      { name: "Tulsipur", province: "Lumbini Province", lat: 28.1333, lon: 82.2833 },
+      
+      // Koshi Province
       { name: "Biratnagar", province: "Koshi Province", lat: 26.4525, lon: 87.2718 },
+      { name: "Dharan", province: "Koshi Province", lat: 26.8147, lon: 87.2799 },
+      { name: "Itahari", province: "Koshi Province", lat: 26.6667, lon: 87.2833 },
+      { name: "Janakpur", province: "Koshi Province", lat: 26.7288, lon: 85.9266 },
       { name: "Namche Bazaar", province: "Koshi Province", lat: 27.8036, lon: 86.7120 },
+      { name: "Taplejung", province: "Koshi Province", lat: 27.3500, lon: 87.6667 },
+      
+      // Madesh Province
+      { name: "Birgunj", province: "Madesh Province", lat: 27.0167, lon: 84.8667 },
+      { name: "Rajbiraj", province: "Madesh Province", lat: 26.5417, lon: 86.7500 },
+      { name: "Kalaiya", province: "Madesh Province", lat: 27.0333, lon: 85.0000 },
+      { name: "Gaur", province: "Madesh Province", lat: 26.7667, lon: 85.2833 },
+      
+      // Karnali Province
+      { name: "Surkhet", province: "Karnali Province", lat: 28.6000, lon: 81.6167 },
+      { name: "Jumla", province: "Karnali Province", lat: 29.2742, lon: 82.1839 },
+      { name: "Dunai", province: "Karnali Province", lat: 28.9667, lon: 82.9000 },
+      { name: "Manma", province: "Karnali Province", lat: 29.4000, lon: 81.8833 },
+      
+      // Sudurpashchim Province
+      { name: "Dhangadi", province: "Sudurpashchim Province", lat: 28.6931, lon: 80.5898 },
+      { name: "Mahendranagar", province: "Sudurpashchim Province", lat: 28.9644, lon: 80.1789 },
+      { name: "Tikapur", province: "Sudurpashchim Province", lat: 28.5167, lon: 81.1167 },
+      { name: "Dadeldhura", province: "Sudurpashchim Province", lat: 29.3000, lon: 80.5833 },
     ];
 
     for (const cityData of nepalCities) {

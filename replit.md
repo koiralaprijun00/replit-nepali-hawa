@@ -34,7 +34,7 @@ Preferred communication style: Simple, everyday language.
 ## Key Components
 
 ### Data Models
-- **Cities**: Nepal cities with coordinates (favorites functionality removed)
+- **Cities**: Comprehensive database of 32+ Nepal cities across all 7 provinces with precise coordinates
 - **Air Quality**: EPA AQI calculated from PM2.5 data with pollutant breakdown (PM2.5, PM10, O3, CO, NO2, SO2, NH3)
 - **Weather**: Temperature, humidity, wind, pressure, and weather conditions
 - **Hourly Forecast**: Short-term weather and AQI predictions based on EPA standards
@@ -57,7 +57,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Data Flow
 
-1. **Initial Load**: App fetches all Nepal cities from in-memory storage
+1. **Initial Load**: App fetches comprehensive database of 32+ Nepal cities from in-memory storage covering all provinces
 2. **Current Location**: Automatic geolocation with real-time AQI data fetching
 3. **Data Refresh**: Manual refresh triggers OpenWeather API calls for all cities
 4. **Individual City**: Detailed view fetches comprehensive data including hourly forecast
