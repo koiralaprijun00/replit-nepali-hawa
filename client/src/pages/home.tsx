@@ -57,9 +57,11 @@ export default function Home() {
   useEffect(() => {
     // Get user's current location
     if (navigator.geolocation) {
+      setLocationError(null); // Clear any previous errors
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          setLocationError(null); // Clear error on success
           setCurrentLocation({
             lat: latitude,
             lon: longitude,
@@ -68,7 +70,14 @@ export default function Home() {
           fetchLocationData(latitude, longitude);
         },
         (error) => {
+          console.error('Geolocation error:', error);
+          setCurrentLocation(null);
           setLocationError("Location access denied");
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
         }
       );
     } else {
@@ -150,8 +159,8 @@ export default function Home() {
           </div>
         )}
         
-        {/* Location Error */}
-        {locationError && (
+        {/* Location Error - only show if no current location data */}
+        {locationError && !currentLocation && !currentLocationData && (
           <div className="p-4 border-b border-gray-100">
             <Card className="p-4 bg-gray-50 border-gray-200">
               <div className="flex items-center justify-between">
@@ -162,7 +171,10 @@ export default function Home() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => window.location.reload()}
+                  onClick={() => {
+                    setLocationError(null);
+                    window.location.reload();
+                  }}
                 >
                   Retry
                 </Button>
