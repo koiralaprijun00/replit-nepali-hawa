@@ -25,22 +25,45 @@ export default function MapView() {
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12', // Satellite view with streets
-      center: [84.1240, 28.3949], // Center on Nepal
-      zoom: 6.5,
-      maxBounds: [
-        [79.5, 26.0], // Southwest coordinates
-        [88.5, 30.5]  // Northeast coordinates
-      ]
-    });
+    // Check if Mapbox access token is available
+    if (!mapboxgl.accessToken) {
+      console.error('Mapbox access token not found');
+      return;
+    }
 
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [84.1240, 28.3949], // Center on Nepal
+        zoom: 6.5,
+        maxBounds: [
+          [79.5, 26.0], // Southwest coordinates
+          [88.5, 30.5]  // Northeast coordinates
+        ],
+        attributionControl: false
+      });
+
+      // Add navigation controls positioned to avoid overlap
+      map.current.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+
+      map.current.on('load', () => {
+        console.log('Mapbox map loaded successfully');
+      });
+
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+      });
+
+    } catch (error) {
+      console.error('Failed to initialize Mapbox:', error);
+    }
 
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
     };
   }, []);
 
@@ -123,14 +146,14 @@ export default function MapView() {
   return (
     <div className="max-w-sm mx-auto min-h-screen relative overflow-hidden">
       {/* Mapbox Container */}
-      <div ref={mapContainer} className="h-screen w-full" />
+      <div ref={mapContainer} className="h-screen w-full" style={{ position: 'relative' }} />
 
       {/* Top Controls */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col space-y-3">
+      <div className="absolute top-4 right-4 z-30 flex flex-col space-y-3">
         <Button
           variant="secondary"
           size="icon"
-          className="bg-white/90 hover:bg-white shadow-lg rounded-xl"
+          className="bg-white/95 hover:bg-white shadow-lg rounded-xl border border-white/50"
           onClick={() => setShowSearch(!showSearch)}
         >
           <Search className="h-5 w-5" />
@@ -138,7 +161,7 @@ export default function MapView() {
         <Button
           variant="secondary"
           size="icon"
-          className="bg-white/90 hover:bg-white shadow-lg rounded-xl"
+          className="bg-white/95 hover:bg-white shadow-lg rounded-xl border border-white/50"
           onClick={() => {
             if (map.current) {
               const style = map.current.getStyle().name;
@@ -155,31 +178,47 @@ export default function MapView() {
 
       {/* Search Bar */}
       {showSearch && (
-        <div className="absolute top-4 left-4 right-20 z-20">
+        <div className="absolute top-4 left-4 right-24 z-30">
           <Input
             placeholder="Search Nepal cities..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="bg-white/95 backdrop-blur-sm shadow-lg border-0 rounded-xl"
+            className="bg-white/95 backdrop-blur-sm shadow-lg border border-white/50 rounded-xl"
           />
         </div>
       )}
 
       {/* My Location Button */}
-      <div className="absolute bottom-28 left-4 z-20">
+      <div className="absolute bottom-28 left-4 z-30">
         <Button
           variant="secondary"
           size="sm"
-          className="bg-white/90 hover:bg-white shadow-lg rounded-xl flex items-center space-x-2 px-4"
+          className="bg-white/95 hover:bg-white shadow-lg rounded-xl flex items-center space-x-2 px-4 border border-white/50"
           onClick={() => {
             if ('geolocation' in navigator && map.current) {
-              navigator.geolocation.getCurrentPosition((position) => {
-                map.current!.flyTo({
-                  center: [position.coords.longitude, position.coords.latitude],
-                  zoom: 10,
-                  duration: 1000
-                });
-              });
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  map.current!.flyTo({
+                    center: [position.coords.longitude, position.coords.latitude],
+                    zoom: 10,
+                    duration: 1000
+                  });
+                },
+                (error) => {
+                  console.error('Geolocation error:', error);
+                  // Fallback to Nepal center
+                  map.current!.flyTo({
+                    center: [84.1240, 28.3949],
+                    zoom: 6.5,
+                    duration: 1000
+                  });
+                },
+                {
+                  enableHighAccuracy: true,
+                  timeout: 5000,
+                  maximumAge: 0
+                }
+              );
             }
           }}
         >
@@ -188,14 +227,14 @@ export default function MapView() {
         </Button>
       </div>
 
-      {/* Bottom Navigation */}
-      <div className="absolute bottom-0 left-0 right-0 z-30">
+      {/* Bottom Navigation - fixed position to avoid overlap */}
+      <div className="absolute bottom-0 left-0 right-0 z-40 bg-white">
         <BottomNav />
       </div>
 
       {/* Selected City Popup */}
       {selectedCity && (
-        <div className="absolute bottom-24 left-4 right-4 z-30">
+        <div className="absolute bottom-24 left-4 right-4 z-35">
           {(() => {
             const city = cities?.find(c => c.id === selectedCity);
             if (!city || !city.airQuality) return null;
