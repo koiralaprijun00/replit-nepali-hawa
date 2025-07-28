@@ -17,6 +17,8 @@ export default function Home() {
   const [showSearch, setShowSearch] = useState(false);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lon: number; name: string } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [currentLocationData, setCurrentLocationData] = useState<CityWithData | null>(null);
+  const [loadingLocation, setLoadingLocation] = useState(false);
   
   const { data: cities, isLoading, error } = useCities();
   const { toast } = useToast();
@@ -26,16 +28,35 @@ export default function Home() {
     return matchesSearch;
   }) || [];
 
+  const fetchLocationData = async (lat: number, lon: number) => {
+    setLoadingLocation(true);
+    try {
+      const response = await fetch(`/api/location?lat=${lat}&lon=${lon}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentLocationData(data);
+      } else {
+        console.error("Failed to fetch location data");
+      }
+    } catch (error) {
+      console.error("Error fetching location data:", error);
+    } finally {
+      setLoadingLocation(false);
+    }
+  };
+
   useEffect(() => {
     // Get user's current location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          const { latitude, longitude } = position.coords;
           setCurrentLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
+            lat: latitude,
+            lon: longitude,
             name: "Current Location"
           });
+          fetchLocationData(latitude, longitude);
         },
         (error) => {
           setLocationError("Location access denied");
@@ -118,19 +139,37 @@ export default function Home() {
               <Navigation className="h-5 w-5 mr-2 text-blue-500" />
               Current Location
             </h3>
-            <Card className="p-4 bg-blue-50 border-blue-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-gray-900">Your Location</h4>
-                  <p className="text-sm text-gray-600">
-                    {currentLocation.lat.toFixed(4)}, {currentLocation.lon.toFixed(4)}
-                  </p>
+            {loadingLocation ? (
+              <Card className="p-4 bg-blue-50 border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Skeleton className="h-6 w-32 mb-2" />
+                    <Skeleton className="h-4 w-24" />
+                  </div>
+                  <Skeleton className="h-8 w-16" />
                 </div>
-                <Button variant="outline" size="sm">
-                  Get AQI
-                </Button>
-              </div>
-            </Card>
+              </Card>
+            ) : currentLocationData ? (
+              <CityCard city={currentLocationData} onCityClick={handleCityClick} />
+            ) : (
+              <Card className="p-4 bg-blue-50 border-blue-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-gray-900">Your Location</h4>
+                    <p className="text-sm text-gray-600">
+                      {currentLocation.lat.toFixed(4)}, {currentLocation.lon.toFixed(4)}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => fetchLocationData(currentLocation.lat, currentLocation.lon)}
+                  >
+                    Get AQI
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         )}
         

@@ -149,24 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update city favorite status
-  app.patch("/api/cities/:id/favorite", async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { isFavorite } = req.body;
-      
-      const updatedCity = await storage.updateCity(id, { isFavorite });
-      
-      if (!updatedCity) {
-        return res.status(404).json({ message: "City not found" });
-      }
 
-      res.json(updatedCity);
-    } catch (error) {
-      console.error('Error updating favorite:', error);
-      res.status(500).json({ message: "Failed to update favorite" });
-    }
-  });
 
   // Refresh data for a specific city from OpenWeather API
   app.post("/api/cities/:id/refresh", async (req, res) => {
@@ -286,6 +269,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error refreshing city data:', error);
       res.status(500).json({ 
         message: "Failed to refresh city data", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
+  // Get current location AQI data
+  app.get("/api/location", async (req, res) => {
+    try {
+      const { lat, lon } = req.query;
+      
+      if (!lat || !lon) {
+        return res.status(400).json({ message: "Latitude and longitude are required" });
+      }
+
+      const latitude = parseFloat(lat as string);
+      const longitude = parseFloat(lon as string);
+
+      // Fetch air quality data
+      const airResponse = await fetch(
+        `http://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}`
+      );
+
+      // Fetch weather data
+      const weatherResponse = await fetch(
+        `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`
+      );
+
+      if (!airResponse.ok || !weatherResponse.ok) {
+        return res.status(500).json({ message: "Failed to fetch location data" });
+      }
+
+      const airData = await airResponse.json();
+      const weatherData = await weatherResponse.json();
+
+      // Calculate EPA AQI
+      const pm25 = airData.list[0].components.pm2_5;
+      const aqiValue = calculateEPAAQI(pm25);
+      const mainPollutant = getMainPollutant(airData.list[0].components);
+
+      const locationData = {
+        id: 'current-location',
+        name: weatherData.name || 'Current Location',
+        province: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+        latitude,
+        longitude,
+        airQuality: {
+          aqi: aqiValue,
+          mainPollutant,
+          timestamp: new Date().toISOString(),
+          pollutants: {
+            co: airData.list[0].components.co,
+            no: airData.list[0].components.no,
+            no2: airData.list[0].components.no2,
+            o3: airData.list[0].components.o3,
+            so2: airData.list[0].components.so2,
+            pm2_5: pm25,
+            pm10: airData.list[0].components.pm10,
+            nh3: airData.list[0].components.nh3,
+          },
+        },
+        weather: {
+          temperature: Math.round(weatherData.main.temp),
+          humidity: weatherData.main.humidity,
+          pressure: weatherData.main.pressure,
+          windSpeed: Math.round(weatherData.wind.speed * 3.6), // Convert m/s to km/h
+          icon: weatherData.weather[0].icon,
+          description: weatherData.weather[0].description,
+          timestamp: new Date().toISOString(),
+        },
+      };
+
+      res.json(locationData);
+    } catch (error) {
+      console.error('Error fetching location data:', error);
+      res.status(500).json({ 
+        message: "Failed to fetch location data", 
         error: error instanceof Error ? error.message : "Unknown error" 
       });
     }
