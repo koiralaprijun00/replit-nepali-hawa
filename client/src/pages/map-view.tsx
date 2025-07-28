@@ -58,7 +58,7 @@ export default function MapView() {
         showZoom: true,
         visualizePitch: false
       });
-      map.current.addControl(navControl, 'bottom-right');
+      map.current.addControl(navControl, 'top-right');
 
       map.current.on('load', () => {
         console.log('Mapbox map loaded successfully');
@@ -186,7 +186,7 @@ export default function MapView() {
       <div ref={mapContainer} className="h-screen w-full" style={{ position: 'relative' }} />
 
       {/* Top Controls */}
-      <div className="absolute top-4 right-4 z-30 flex flex-col space-y-3">
+      <div className="absolute top-20 right-4 z-30 flex flex-col space-y-3">
         <Button
           variant="secondary"
           size="icon"
@@ -215,7 +215,7 @@ export default function MapView() {
 
       {/* Search Bar */}
       {showSearch && (
-        <div className="absolute top-4 left-4 right-24 z-30">
+        <div className="absolute top-4 left-4 right-4 z-30">
           <Input
             placeholder="Search Nepal cities..."
             value={searchQuery}
