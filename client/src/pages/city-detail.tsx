@@ -215,6 +215,20 @@ export default function CityDetail({ params }: CityDetailProps) {
           </ul>
         </Card>
 
+        {/* Data Source Info */}
+        <Card className="p-4 bg-blue-50 border-blue-200">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">📊 Data Source</h3>
+          <p className="text-xs text-blue-800">
+            AQI calculated using U.S. EPA standards from OpenWeather satellite data. 
+            Values may differ from ground monitor stations due to location and measurement methodology.
+          </p>
+          {city.airQuality?.pollutants?.pm2_5 && (
+            <p className="text-xs text-blue-700 mt-1">
+              Current PM2.5: {Math.round(city.airQuality.pollutants.pm2_5 * 10) / 10} μg/m³ → EPA AQI {city.airQuality.aqi}
+            </p>
+          )}
+        </Card>
+
         {/* Pollutant Breakdown */}
         {city.airQuality?.pollutants && (
           <Card className="p-4">
