@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import CityDetail from "@/pages/city-detail";
 import MapView from "@/pages/map-view";
 import Rankings from "@/pages/rankings";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/city/:id" component={CityDetail} />
       <Route path="/map" component={MapView} />
       <Route path="/rankings" component={Rankings} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );

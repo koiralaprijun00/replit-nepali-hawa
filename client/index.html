@@ -2,11 +2,73 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Nepal Air Quality Monitor - Real-time AQI Tracking</title>
+    <meta name="title" content="Nepal Air Quality Monitor - Real-time AQI Tracking">
+    <meta name="description" content="Monitor real-time air quality across Nepal cities with EPA AQI standards. Track pollution levels, view interactive maps, and get health recommendations.">
+    <meta name="keywords" content="Nepal air quality, AQI, pollution, environment, health, Kathmandu, air pollution monitor">
+    <meta name="author" content="Nepal Air Quality Monitor">
+    <meta name="robots" content="index, follow">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="background-color" content="#ffffff">
+    <meta name="display" content="standalone">
+    <meta name="start_url" content="/">
+    
+    <!-- Apple Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="AirQuality Nepal">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Microsoft Meta Tags -->
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="msapplication-tap-highlight" content="no">
+    
+    <!-- Favicon and Icons -->
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="shortcut icon" href="/icon.svg">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nepal Air Quality Monitor - Real-time AQI Tracking">
+    <meta property="og:description" content="Monitor real-time air quality across Nepal cities with EPA AQI standards. Track pollution levels, view interactive maps, and get health recommendations.">
+    <meta property="og:image" content="/icon-512.png">
+    <meta property="og:site_name" content="Nepal Air Quality Monitor">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Nepal Air Quality Monitor - Real-time AQI Tracking">
+    <meta property="twitter:description" content="Monitor real-time air quality across Nepal cities with EPA AQI standards. Track pollution levels, view interactive maps, and get health recommendations.">
+    <meta property="twitter:image" content="/icon-512.png">
+    
+    <!-- Performance and Security -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="referrer" content="no-referrer-when-downgrade">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+    
     <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
     <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>

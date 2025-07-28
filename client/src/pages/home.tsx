@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { CityCard } from "@/components/city-card";
 import { BottomNav } from "@/components/bottom-nav";
+import { InstallPrompt } from "@/components/install-prompt";
+import { WidgetCard } from "@/components/widget-card";
+import { QuickActions } from "@/components/quick-actions";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -107,6 +110,7 @@ export default function Home() {
   return (
     <div className="max-w-sm mx-auto bg-white min-h-screen relative">
       <Header />
+      <InstallPrompt />
 
       {/* Header Section */}
       <div className="bg-white px-4 py-2 border-b border-gray-100">
@@ -118,6 +122,14 @@ export default function Home() {
       {/* Content */}
       <div className="pb-20">
         
+        {/* Quick Actions */}
+        <div className="p-4 pb-2">
+          <QuickActions 
+            onRefresh={() => window.location.reload()}
+            isRefreshing={isLoading}
+          />
+        </div>
+
         {/* Current Location Section */}
         {currentLocation && (
           <div className="p-4 border-b border-gray-100">
@@ -136,7 +148,11 @@ export default function Home() {
                 </div>
               </Card>
             ) : currentLocationData ? (
-              <CityCard city={currentLocationData} onCityClick={handleCityClick} />
+              <WidgetCard 
+                city={currentLocationData} 
+                isCurrentLocation={true}
+                onViewDetails={() => handleCityClick(currentLocationData.id)}
+              />
             ) : (
               <Card className="p-4 bg-blue-50 border-blue-200">
                 <div className="flex items-center justify-between">

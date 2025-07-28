@@ -1,4 +1,4 @@
-import { Home, Map, Trophy } from "lucide-react";
+import { Home, Map, Trophy, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
@@ -14,11 +14,12 @@ export function BottomNav({ onMapClick, onRankingsClick }: BottomNavProps) {
     { icon: Home, label: "Home", path: "/", onClick: () => setLocation("/") },
     { icon: Map, label: "Map", path: "/map", onClick: () => setLocation("/map") },
     { icon: Trophy, label: "Rankings", path: "/rankings", onClick: () => setLocation("/rankings") },
+    { icon: Settings, label: "Settings", path: "/settings", onClick: () => setLocation("/settings") },
   ];
 
   return (
     <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-sm bg-white border-t border-gray-200 px-4 py-2">
-      <div className="flex justify-center items-center space-x-12">
+      <div className="flex justify-center items-center space-x-8">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.path;
