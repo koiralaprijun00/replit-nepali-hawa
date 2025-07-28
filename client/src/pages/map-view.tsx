@@ -320,6 +320,25 @@ export default function MapView() {
       )}
 
       <style>{`
+        /* Ensure Mapbox navigation controls are visible */
+        .mapboxgl-ctrl-group {
+          z-index: 50 !important;
+        }
+        
+        .mapboxgl-ctrl-zoom-in,
+        .mapboxgl-ctrl-zoom-out {
+          z-index: 50 !important;
+          background-color: rgba(255, 255, 255, 0.95) !important;
+          border: 1px solid rgba(255, 255, 255, 0.5) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        }
+        
+        .mapboxgl-ctrl-zoom-in:hover,
+        .mapboxgl-ctrl-zoom-out:hover {
+          background-color: white !important;
+        }
+        
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }
