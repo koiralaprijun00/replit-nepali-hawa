@@ -45,6 +45,7 @@ Preferred communication style: Simple, everyday language.
 - **Header**: App navigation with search and refresh functionality
 - **BottomNav**: Mobile navigation with Home, Map, Trends, Rankings, Settings
 - **Rankings**: Global air quality leaderboard with trophy icons and color-coded badges
+- **Map View**: Full-screen interactive map with colored AQI circles, search functionality, and IQAir Earth styling
 - **Comprehensive UI Kit**: Full shadcn/ui component library integration
 
 ### External API Integration
