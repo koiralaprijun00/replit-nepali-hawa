@@ -1,0 +1,292 @@
+IQAir LogoIQAir Logo
+Air Quality
+Air Monitors
+Air Purifiers
+Filters
+Face Masks
+For Business
+News
+Impact
+Search
+International flag
+Sign in
+CartClick to open cart
+Air Quality
+Resources
+What is the air quality index (AQI)?
+3 Aug 2018
+person using AirVisual App with air pollution in background
+The Air Quality Index (AQI) is a measurement of air pollutant concentrations in ambient air pollution and their associated health risks.
+
+Air pollutants measured in AQI
+There are six air pollutants measured in the index formula, including:
+
+PM2.5
+PM10
+carbon monoxide
+sulfur dioxide
+nitrogen dioxide
+ground-level ozone
+An AQI number is assigned based on the air pollutant with the highest AQI number at the moment the air quality is measured. Only pollutants available from a given air quality monitoring station are measured, and many do not include all six pollutants equally. Because air quality changes throughout the day, a monitored location’s AQI changes with the level of measured air pollutant concentrations.
+
+The index represents air pollutant concentrations with a number falling within a range of air quality categories. Within each category and number range, elevated health risks associated with rising air pollutant concentrations are identified.
+
+The air quality index ranges from 0 to 500, though air quality can be indexed beyond 500 when there are higher levels of hazardous air pollution. Good air quality ranges from 0 to 50, while measurements over 300 are considered hazardous.
+
+IQAir AirVisual platform AQI readings are based on the U.S. Environmental Protection Agency (EPA) National Ambient Air Quality Standards (NAAQS) to calculate AQI and to attribute code color.4,5 AirVisual Series air quality monitors measure PM2.5, PM1, PM10, and carbon dioxide levels and use PM2.5, or fine particulate matter, to determine the AQI.
+
+The AirVisual Series monitors AQI using PM2.5 measurements as the determinant for AQI readings because PM2.5 is widely available and considered the most hazardous air pollutant impacting human health.6,7,8
+
+PM2.5 is measured by micrograms per cubic meter (μg/m3). According to the U.S. EPA NAAQS, any measurement greater than 9.0 μg/m3 (US AQI 50) can be dangerous to human health.
+
+AQI Chart
+Pictured: Air quality index chart with corresponding PM2.5 μg/m3.
+
+AQI categories
+Here’s how each of the AQI categories are represented, how they can impact human health, and some recommendations for what to do when the AQI has reached a higher category.
+
+The categories are listed from least harmful to human health (“good”) to the most harmful (“hazardous”).
+
+Good
+green-aqi_4
+
+AQI: 0-50
+PM2.5 (μg/m3): 0-9.0
+Green
+When categorised as good, air quality poses little to no health risk at an AQI of 0 up to an AQI of 50. You can enjoy your usual outdoor activities. You may choose to open your windows and ventilate your home to bring in outdoor air.
+
+Moderate
+yellow 4
+
+AQI: 51-100
+PM2.5 (μg/m3): 9.1-35.4
+Yellow
+Due to the risk of respiratory illness symptoms, sensitive groups should greatly reduce outdoor exercise when air quality is moderate (US AQI 51-100). Avoid ventilating indoor spaces with outdoor air, and close windows to avoid letting outdoor air pollution indoors.
+
+Note that sensitive groups for all categories include children, the elderly, pregnant people, and people with cardiac and pulmonary diseases.
+
+Unhealthy for sensitive groups
+orange 5
+
+AQI: 101-150
+PM2.5 (μg/m3): 35.5-55.4
+Orange
+When air quality is unhealthy for sensitive groups, everyone is at risk for eye, skin, and throat irritation as well as respiratory problems. The public should greatly reduce outdoor exertion.
+
+Sensitive groups are at greater health risk, should avoid all outdoor activity, and should consider wearing an air pollution mask outdoors. Ventilation is discouraged. A high-performance air purifier should be turned on if indoor air quality is unhealthy.
+
+Unhealthy
+red 4
+
+AQI: 151-200
+PM2.5 (μg/m3): 55.5-125.4
+Red
+Unhealthy AQI measurements mean that there is an increased likelihood of heart and lung aggravation as well as health impacts among the public, particularly for sensitive groups.
+
+Everyone should avoid and wear a pollution mask outdoors. Ventilation is discouraged. Air purifiers should be turned on.
+
+Very unhealthy
+purple 4
+
+AQI: 201-300
+PM2.5 (μg/m3): 125.5-225.4
+Purple
+When air quality is very unhealthy, the public will be noticeably affected. Sensitive groups will experience reduced endurance in activities. These individuals should remain indoors and limit activities.
+
+Everyone should avoid outdoor exercise and wear a pollution mask outdoors. Ventilation is discouraged. Air purifiers should be turned on.
+
+Hazardous
+maroon 4
+
+AQI: 301-500 or greater
+PM2.5 (μg/m3): 225.5 or greater
+Maroon
+Everyone is at high risk of experiencing strong irritation and negative health effects that could trigger cardiovascular and respiratory illnesses.
+
+Avoid exercise and remain indoors. Avoid outdoor exercise and wear a pollution mask outdoors. Ventilation is discouraged. Air purifiers should be turned on.
+
+Differences between AQI systems
+There are different systems used around the world for measuring air quality. The United States and China AQI systems are the most widely used systems – both measure the same group of air pollutants. However, each system rates AQI scores from 200 and lower differently.2
+
+The U.S. AQI system generally yields higher scores for AQI under 200 because lower levels of concentrations of PM2.5 result in a higher AQI value. The U.S. revised its AQI standard in 2013 when it was found that lower levels of PM2.5 were associated with greater serious health consequences than was previously understood.3 Consequently, the U.S. AQI system is considered the more stringent standard and is the world standard.
+
+China and U.S. air quality index and PM2.5 concentration comparison chart
+U.S./China AQI Level	U.S. PM2.5 concentrations (µg/m3)	China PM2.5 concentrations (µg/m3)
+0-50	0-9.0	0-35
+51-100	9.1-35.4	35.1-75
+101-150	35.5-55.4	75.1-115
+151-200	56.5-125.4	115.1-150
+201-300	125.5-225.4	150.1-250
+301-500	225.5+	250.1-500
+Pictured: Comparison chart of China and U.S. air quality index differences.
+
+The takeaway
+The air quality index reinterprets potentially complex air quality data into a meaningful number with corresponding categories of pollutant concentrations and associated health effects.
+
+Please note, though, that there is no safe level of air pollution, in particular as the AQI reaches closer to 50 and beyond. By knowing whether the air we breathe is safe and how it can impact our health, it’s possible to take action to help control the harmful health effects of air pollution.
+
+About IQAir
+ABOUT IQAIR
+IQAir is a Swiss technology company that empowers individuals, organizations and governments to improve air quality through information and collaboration.
+Article Resources
+
+
+
+
+
+
+
+
+Share on WhatsApp
+Share on LinkedIn
+Share on X
+Share on Facebook
+Trending topics
+Air Cleaning Technology
+Air Quality
+Allergies and Asthma
+Awards and Reviews
+Climate
+Community
+Featured Contributor
+Health and Wellness
+Parents
+Pets
+
+Display more tags
++4
+Related news
+Man in city coughing with face mask
+5 min read
+What pollutants should I watch out for?
+Hazy skies over city landscape
+6 min read
+PM2.5
+Dusk
+4 min read
+Ozone
+Newsletter
+Receive the latest releases and tips, exclusive articles, in your inbox every week.
+
+Enter your email
+Read about our privacy policy
+
+Subscribe
+Featured product
+IQAir AirVisual Pro | Indoor Air Quality Monitor
+4.9 out of 5 stars, average rating value. Read 120 Reviews. Same page link.
+4.9
+ 
+(120)
+Write a review
+Designed to measure & monitor indoor air quality 
+The AirVisual Pro Monitor reports air quality inside your home, school, or business. Measures air pollution from cooking, cleaning, wood burning, interior decoration, smoking, and wildfire smoke and traffic pollution entering the building. View real-time and historic air quality via the free mobile IQAir AirVisual app.
+
+
+More details
+Featured product
+HealthPro 250 | Room Air Purifier
+4.9 out of 5 stars, average rating value. Read 925 Reviews. Same page link.
+4.9
+ 
+(925)
+Write a review
+Advanced air purification to remove pollution, dust, and odours effectively
+Experience the HealthPro 250, the ultimate air purifier designed to provide exceptional particle and gas-phase filtration. Engineered to tackle allergens, dust, airborne viruses, bacteria, gases, and odours, ensuring thorough and comprehensive air purification. Perfectly suited for everyone including sensitive individuals, allergy sufferers, and pet owners, this advanced purifier is the ideal solution for healthy indoor air quality.
+
+IQAir HealthPro 250 air purifier for smoke, allergens, and ultrafine particles
+More details
+More from the news
+Wildfire at night in hills
+8 min read
+Air Quality
+Climate
+
+Display more tags
++2
+How to protect yourself from wildfire smoke
+Close-up of what appears to be a room air purifier with some plants in the background (another indoor air purifying tool that has been shown to be ineffective in improving indoor air quality).
+12 min read
+Air Cleaning Technology
+Health and Wellness
+
+Display more tags
++1
+Do air purifiers work? Air purifier myths and facts debunked
+Why are Himalayan salt lamps bad for air quality?
+8 min read
+Air Quality
+Health and Wellness
+
+Display more tags
++1
+Himalayan salt lamps: Worth their salt?
+Two lit candles
+5 min read
+Health and Wellness
+Popular articles
+The hidden dangers of scented candles
+Connect With IQAir
+Sign up below to join the clean air community and receive the latest air quality news and science to help improve the air around you.
+
+Email address
+Email
+IQAir arrow pointing to the right
+About IQAir
+About Us
+Contact Us
+Awards and Partnerships
+Careers
+Join the Community
+Become a Dealer
+Air Quality
+Air Quality Map
+World Air Quality
+Historical Air Quality Data
+Live AQI⁺ City Ranking
+World Air Quality Report
+Air Quality API
+Air Quality App
+Products
+Air Quality Monitors
+Air Purifiers
+Replacement Filters
+HVAC Air Filtration
+Face Masks
+IQAir Dashboard
+Business Solutions
+Commercial Air Purification
+Schools
+Hospitality
+Museums
+Hospitals
+Dental Offices
+Laboratories
+News
+Air Quality News
+Health and Wellness
+Allergies and Asthma
+Pets
+Parents
+Success Stories
+Wildfire
+Support
+Product Support
+Warranty Overview
+Warranty Registration
+Knowledge Base
+IWBI Logo
+Facebook
+X
+YouTube
+Instagram
+IQAir Logo
+International flag
+International
+Settings Icon
+AQI⁺ US, metric
+Privacy Choices
+Terms of Use
+View Privacy Policy
+Privacy Policy
+© 2025 IQAir. All rights reserved

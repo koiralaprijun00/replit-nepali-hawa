@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCity, useRefreshCity } from "@/lib/api";
 import { useLocation } from "wouter";
-import { AQI_LEVELS, HEALTH_RECOMMENDATIONS, WEATHER_ICONS } from "@/lib/constants";
+import { getAQILevel, getHealthRecommendations, WEATHER_ICONS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
 interface CityDetailProps {
@@ -26,7 +26,7 @@ export default function CityDetail({ params }: CityDetailProps) {
       try {
         await navigator.share({
           title: `Air Quality in ${city.name}`,
-          text: `AQI: ${city.airQuality?.aqi} - ${AQI_LEVELS[Math.min(city.airQuality?.aqi || 1, 5) as keyof typeof AQI_LEVELS]?.label}`,
+          text: `AQI: ${city.airQuality?.aqi} - ${getAQILevel(city.airQuality?.aqi || 0).label}`,
           url: window.location.href,
         });
       } catch (error) {
@@ -109,9 +109,9 @@ export default function CityDetail({ params }: CityDetailProps) {
     );
   }
 
-  const aqiLevel = city.airQuality?.aqi || 1;
-  const aqiConfig = AQI_LEVELS[Math.min(aqiLevel, 5) as keyof typeof AQI_LEVELS];
-  const healthRecommendations = HEALTH_RECOMMENDATIONS[Math.min(aqiLevel, 5) as keyof typeof HEALTH_RECOMMENDATIONS];
+  const aqiLevel = city.airQuality?.aqi || 0;
+  const aqiConfig = getAQILevel(aqiLevel);
+  const healthRecommendations = getHealthRecommendations(aqiLevel);
 
   const getWeatherIcon = () => {
     if (!city.weather?.icon) return '☁️';
@@ -272,7 +272,7 @@ export default function CityDetail({ params }: CityDetailProps) {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">24-Hour Forecast</h3>
             <div className="flex space-x-4 overflow-x-auto pb-2">
               {city.hourlyForecast.slice(0, 8).map((hour, index) => {
-                const hourAqiConfig = AQI_LEVELS[Math.min(hour.aqi, 5) as keyof typeof AQI_LEVELS];
+                const hourAqiConfig = getAQILevel(hour.aqi);
                 const weatherIcon = WEATHER_ICONS[hour.icon as keyof typeof WEATHER_ICONS] || '☁️';
                 
                 return (

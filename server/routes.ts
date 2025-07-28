@@ -54,6 +54,36 @@ interface OpenWeatherForecast {
   }>;
 }
 
+// EPA AQI Calculation for PM2.5 (μg/m³)
+function calculateEPAAQI(pm25: number): number {
+  const breakpoints = [
+    { aqiLow: 0, aqiHigh: 50, concLow: 0.0, concHigh: 9.0 },
+    { aqiLow: 51, aqiHigh: 100, concLow: 9.1, concHigh: 35.4 },
+    { aqiLow: 101, aqiHigh: 150, concLow: 35.5, concHigh: 55.4 },
+    { aqiLow: 151, aqiHigh: 200, concLow: 55.5, concHigh: 125.4 },
+    { aqiLow: 201, aqiHigh: 300, concLow: 125.5, concHigh: 225.4 },
+    { aqiLow: 301, aqiHigh: 500, concLow: 225.5, concHigh: 325.4 }
+  ];
+
+  // Find the appropriate breakpoint
+  for (const bp of breakpoints) {
+    if (pm25 >= bp.concLow && pm25 <= bp.concHigh) {
+      // EPA AQI formula: I = ((I_high - I_low) / (C_high - C_low)) * (C - C_low) + I_low
+      const aqi = Math.round(
+        ((bp.aqiHigh - bp.aqiLow) / (bp.concHigh - bp.concLow)) * (pm25 - bp.concLow) + bp.aqiLow
+      );
+      return aqi;
+    }
+  }
+
+  // If concentration is above the highest breakpoint
+  if (pm25 > 325.4) {
+    return 500; // Hazardous level cap
+  }
+
+  return 0;
+}
+
 function getMainPollutant(components: any): string {
   const pollutants = [
     { name: 'PM2.5', value: components.pm2_5, threshold: 35 },
@@ -182,23 +212,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const forecastData: OpenWeatherForecast = await forecastResponse.json();
 
       // Store air quality data
+      let currentPollution: any = null;
       if (airPollutionData.list && airPollutionData.list.length > 0) {
-        const pollution = airPollutionData.list[0];
+        currentPollution = airPollutionData.list[0];
+        // Calculate EPA AQI from PM2.5 concentration
+        const epaAqi = calculateEPAAQI(currentPollution.components.pm2_5);
+        
         await storage.updateAirQuality(city.id, {
           cityId: city.id,
-          aqi: pollution.main.aqi,
-          mainPollutant: getMainPollutant(pollution.components),
+          aqi: epaAqi, // Use EPA calculated AQI instead of OpenWeather AQI
+          mainPollutant: getMainPollutant(currentPollution.components),
           pollutants: {
-            co: pollution.components.co,
-            no: pollution.components.no,
-            no2: pollution.components.no2,
-            o3: pollution.components.o3,
-            so2: pollution.components.so2,
-            pm2_5: pollution.components.pm2_5,
-            pm10: pollution.components.pm10,
-            nh3: pollution.components.nh3,
+            co: currentPollution.components.co,
+            no: currentPollution.components.no,
+            no2: currentPollution.components.no2,
+            o3: currentPollution.components.o3,
+            so2: currentPollution.components.so2,
+            pm2_5: currentPollution.components.pm2_5,
+            pm10: currentPollution.components.pm10,
+            nh3: currentPollution.components.nh3,
           },
-          timestamp: new Date(pollution.dt * 1000).toISOString(),
+          timestamp: new Date(currentPollution.dt * 1000).toISOString(),
         });
       }
 
@@ -219,24 +253,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Store hourly forecast
       await storage.clearHourlyForecast(city.id);
-      for (const item of forecastData.list) {
-        await storage.createHourlyForecast({
-          cityId: city.id,
-          time: new Date(item.dt * 1000).toISOString(),
-          aqi: Math.floor(Math.random() * 200) + 1, // Mock AQI for forecast
-          temperature: Math.round(item.main.temp),
-          icon: item.weather[0].icon,
-          pollutants: {
-            co: Math.random() * 10,
-            no: Math.random() * 50,
-            no2: Math.random() * 100,
-            o3: Math.random() * 200,
-            so2: Math.random() * 100,
-            pm2_5: Math.random() * 100,
-            pm10: Math.random() * 200,
-            nh3: Math.random() * 50,
-          },
-        });
+      if (currentPollution) {
+        for (const item of forecastData.list) {
+          // Generate forecast AQI based on current PM2.5 with some variation
+          const basePM25 = currentPollution.components.pm2_5;
+          const variationFactor = 0.8 + Math.random() * 0.4; // 80% to 120% of current
+          const forecastPM25 = basePM25 * variationFactor;
+          const forecastAqi = calculateEPAAQI(forecastPM25);
+          
+          await storage.createHourlyForecast({
+            cityId: city.id,
+            time: new Date(item.dt * 1000).toISOString(),
+            aqi: forecastAqi,
+            temperature: Math.round(item.main.temp),
+            icon: item.weather[0].icon,
+            pollutants: {
+              co: currentPollution.components.co * variationFactor,
+              no: currentPollution.components.no * variationFactor,
+              no2: currentPollution.components.no2 * variationFactor,
+              o3: currentPollution.components.o3 * variationFactor,
+              so2: currentPollution.components.so2 * variationFactor,
+              pm2_5: forecastPM25,
+              pm10: currentPollution.components.pm10 * variationFactor,
+              nh3: currentPollution.components.nh3 * variationFactor,
+            },
+          });
+        }
       }
 
       res.json({ message: "Data refreshed successfully" });

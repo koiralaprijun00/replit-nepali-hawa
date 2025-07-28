@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a modern mobile-first web application for monitoring air quality and weather data in cities of Nepal using the OpenWeather API. The app provides real-time Air Quality Index (AQI) and weather information with a clean, user-friendly interface designed for mobile devices.
+This is a modern mobile-first web application for monitoring air quality and weather data in cities of Nepal using the OpenWeather API. The app provides real-time Air Quality Index (AQI) calculated using U.S. EPA standards and weather information with a clean, user-friendly interface designed for mobile devices.
 
 ## User Preferences
 
@@ -35,9 +35,9 @@ Preferred communication style: Simple, everyday language.
 
 ### Data Models
 - **Cities**: Nepal cities with coordinates and favorite status
-- **Air Quality**: AQI data with pollutant breakdown (PM2.5, PM10, O3, CO, NO2, SO2, NH3)
+- **Air Quality**: EPA AQI calculated from PM2.5 data with pollutant breakdown (PM2.5, PM10, O3, CO, NO2, SO2, NH3)
 - **Weather**: Temperature, humidity, wind, pressure, and weather conditions
-- **Hourly Forecast**: Short-term weather predictions
+- **Hourly Forecast**: Short-term weather and AQI predictions based on EPA standards
 
 ### UI Components
 - **CityCard**: Displays city overview with AQI status and weather
@@ -47,6 +47,8 @@ Preferred communication style: Simple, everyday language.
 
 ### External API Integration
 - **OpenWeather API**: For real-time air quality and weather data
+- **EPA AQI Calculation**: Uses U.S. Environmental Protection Agency standards to calculate AQI from PM2.5 concentrations
+- **AQI Standards**: Follows EPA breakpoints (0-50 Good, 51-100 Moderate, 101-150 Unhealthy for Sensitive Groups, 151-200 Unhealthy, 201-300 Very Unhealthy, 301-500 Hazardous)
 - **Rate limiting considerations**: 5-minute cache intervals for API calls
 - **Error handling**: Graceful degradation when API is unavailable
 

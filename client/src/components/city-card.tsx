@@ -1,7 +1,7 @@
 import { Heart, Cloud, Sun, CloudRain, Thermometer, Droplets, Wind } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AQI_LEVELS, WEATHER_ICONS } from "@/lib/constants";
+import { getAQILevel, WEATHER_ICONS } from "@/lib/constants";
 import { useToggleFavorite } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import type { CityWithData } from "@/lib/api";
@@ -15,8 +15,8 @@ export function CityCard({ city, onClick }: CityCardProps) {
   const toggleFavorite = useToggleFavorite();
   const { toast } = useToast();
 
-  const aqiLevel = city.airQuality?.aqi || 1;
-  const aqiConfig = AQI_LEVELS[Math.min(aqiLevel, 5) as keyof typeof AQI_LEVELS];
+  const aqiLevel = city.airQuality?.aqi || 0;
+  const aqiConfig = getAQILevel(aqiLevel);
   
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
