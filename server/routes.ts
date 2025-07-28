@@ -350,6 +350,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get global air quality rankings
+  app.get("/api/rankings", async (req, res) => {
+    try {
+      // Sample world cities with their coordinates for ranking
+      const worldCities = [
+        { name: "Zurich", country: "Switzerland", lat: 47.3769, lon: 8.5417 },
+        { name: "Helsinki", country: "Finland", lat: 60.1699, lon: 24.9384 },
+        { name: "Oslo", country: "Norway", lat: 59.9139, lon: 10.7522 },
+        { name: "Stockholm", country: "Sweden", lat: 59.3293, lon: 18.0686 },
+        { name: "Copenhagen", country: "Denmark", lat: 55.6761, lon: 12.5683 },
+        { name: "Reykjavik", country: "Iceland", lat: 64.1466, lon: -21.9426 },
+        { name: "Wellington", country: "New Zealand", lat: -41.2865, lon: 174.7762 },
+        { name: "Sydney", country: "Australia", lat: -33.8688, lon: 151.2093 },
+        { name: "Vancouver", country: "Canada", lat: 49.2827, lon: -123.1207 },
+        { name: "Montreal", country: "Canada", lat: 45.5017, lon: -73.5673 },
+        { name: "Delhi", country: "India", lat: 28.7041, lon: 77.1025 },
+        { name: "Mumbai", country: "India", lat: 19.0760, lon: 72.8777 },
+        { name: "Beijing", country: "China", lat: 39.9042, lon: 116.4074 },
+        { name: "Shanghai", country: "China", lat: 31.2304, lon: 121.4737 },
+        { name: "Dhaka", country: "Bangladesh", lat: 23.8103, lon: 90.4125 },
+        { name: "Lahore", country: "Pakistan", lat: 31.5804, lon: 74.3587 },
+        { name: "Karachi", country: "Pakistan", lat: 24.8607, lon: 67.0011 },
+        { name: "Cairo", country: "Egypt", lat: 30.0444, lon: 31.2357 },
+        { name: "Lagos", country: "Nigeria", lat: 6.5244, lon: 3.3792 },
+        { name: "Mexico City", country: "Mexico", lat: 19.4326, lon: -99.1332 }
+      ];
+
+      // Fetch air quality data for all cities
+      const cityPromises = worldCities.map(async (city) => {
+        try {
+          const airResponse = await fetch(
+            `http://api.openweathermap.org/data/2.5/air_pollution?lat=${city.lat}&lon=${city.lon}&appid=${process.env.OPENWEATHER_API_KEY}`
+          );
+          
+          if (airResponse.ok) {
+            const airData = await airResponse.json();
+            const pm25 = airData.list[0].components.pm2_5;
+            const aqiValue = calculateEPAAQI(pm25);
+            
+            return {
+              city: city.name,
+              country: city.country,
+              aqi: aqiValue,
+              pm25: pm25
+            };
+          }
+          return null;
+        } catch (error) {
+          console.error(`Error fetching data for ${city.name}:`, error);
+          return null;
+        }
+      });
+
+      const results = await Promise.all(cityPromises);
+      const validResults = results.filter(result => result !== null);
+
+      // Sort cities by AQI
+      const sortedByAQI = [...validResults].sort((a, b) => a.aqi - b.aqi);
+      
+      // Get top 10 cleanest (lowest AQI)
+      const cleanest = sortedByAQI.slice(0, 10).map((city, index) => ({
+        ...city,
+        rank: index + 1
+      }));
+
+      // Get top 10 most polluted (highest AQI)
+      const polluted = sortedByAQI.slice(-10).reverse().map((city, index) => ({
+        ...city,
+        rank: index + 1
+      }));
+
+      res.json({
+        cleanest,
+        polluted,
+        totalCities: validResults.length,
+        lastUpdated: new Date().toISOString()
+      });
+
+    } catch (error) {
+      console.error('Error fetching rankings:', error);
+      res.status(500).json({ 
+        message: "Failed to fetch rankings data", 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      });
+    }
+  });
+
   // Refresh all cities data
   app.post("/api/refresh-all", async (req, res) => {
     try {

@@ -1,22 +1,22 @@
-import { Home, Map, TrendingUp, Bell, Settings } from "lucide-react";
+import { Home, Map, TrendingUp, Trophy, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
 interface BottomNavProps {
   onMapClick?: () => void;
   onTrendsClick?: () => void;
-  onAlertsClick?: () => void;
+  onRankingsClick?: () => void;
   onSettingsClick?: () => void;
 }
 
-export function BottomNav({ onMapClick, onTrendsClick, onAlertsClick, onSettingsClick }: BottomNavProps) {
-  const [location] = useLocation();
+export function BottomNav({ onMapClick, onTrendsClick, onRankingsClick, onSettingsClick }: BottomNavProps) {
+  const [location, setLocation] = useLocation();
 
   const navItems = [
-    { icon: Home, label: "Home", path: "/", onClick: () => window.location.href = "/" },
-    { icon: Map, label: "Map", path: "/map", onClick: onMapClick },
+    { icon: Home, label: "Home", path: "/", onClick: () => setLocation("/") },
+    { icon: Map, label: "Map", path: "/map", onClick: () => setLocation("/map") },
     { icon: TrendingUp, label: "Trends", path: "/trends", onClick: onTrendsClick },
-    { icon: Bell, label: "Alerts", path: "/alerts", onClick: onAlertsClick },
+    { icon: Trophy, label: "Rankings", path: "/rankings", onClick: () => setLocation("/rankings") },
     { icon: Settings, label: "Settings", path: "/settings", onClick: onSettingsClick },
   ];
 
