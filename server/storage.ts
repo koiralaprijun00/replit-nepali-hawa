@@ -44,13 +44,11 @@ export class MemStorage implements IStorage {
   private async initializeNepalCities() {
     const nepalCities = [
       { name: "Kathmandu", province: "Bagmati Province", lat: 27.7172, lon: 85.3240 },
-      { name: "Pokhara", province: "Gandaki Province", lat: 28.2096, lon: 83.9856 },
       { name: "Chitwan", province: "Bagmati Province", lat: 27.5291, lon: 84.3542 },
-      { name: "Lalitpur", province: "Bagmati Province", lat: 27.6588, lon: 85.3247 },
-      { name: "Bhaktapur", province: "Bagmati Province", lat: 27.6710, lon: 85.4298 },
+      { name: "Pokhara", province: "Gandaki Province", lat: 28.2096, lon: 83.9856 },
+      { name: "Dhangadi", province: "Sudurpashchim Province", lat: 28.6931, lon: 80.5898 },
       { name: "Biratnagar", province: "Koshi Province", lat: 26.4525, lon: 87.2718 },
-      { name: "Dharan", province: "Koshi Province", lat: 26.8148, lon: 87.2847 },
-      { name: "Hetauda", province: "Bagmati Province", lat: 27.4286, lon: 85.0449 },
+      { name: "Namche Bazaar", province: "Koshi Province", lat: 27.8036, lon: 86.7120 },
     ];
 
     for (const cityData of nepalCities) {

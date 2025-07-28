@@ -6,7 +6,6 @@ export const citySchema = z.object({
   province: z.string(),
   lat: z.number(),
   lon: z.number(),
-  isFavorite: z.boolean().default(false),
 });
 
 export const pollutantSchema = z.object({

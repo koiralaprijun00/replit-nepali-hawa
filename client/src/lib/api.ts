@@ -28,19 +28,7 @@ export function useCity(id: string) {
   });
 }
 
-export function useToggleFavorite() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async ({ cityId, isFavorite }: { cityId: string; isFavorite: boolean }) => {
-      const response = await apiRequest('PATCH', `/api/cities/${cityId}/favorite`, { isFavorite });
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/cities'] });
-    },
-  });
-}
+
 
 export function useRefreshCity() {
   const queryClient = useQueryClient();

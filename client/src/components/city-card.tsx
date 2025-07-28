@@ -1,43 +1,17 @@
-import { Heart, Cloud, Sun, CloudRain, Thermometer, Droplets, Wind } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Cloud, Sun, CloudRain, Thermometer, Droplets, Wind } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { getAQILevel, WEATHER_ICONS } from "@/lib/constants";
-import { useToggleFavorite } from "@/lib/api";
-import { useToast } from "@/hooks/use-toast";
 import type { CityWithData } from "@/lib/api";
 
 interface CityCardProps {
   city: CityWithData;
-  onClick?: () => void;
+  onCityClick: (cityId: string) => void;
 }
 
-export function CityCard({ city, onClick }: CityCardProps) {
-  const toggleFavorite = useToggleFavorite();
-  const { toast } = useToast();
-
+export function CityCard({ city, onCityClick }: CityCardProps) {
   const aqiLevel = city.airQuality?.aqi || 0;
   const aqiConfig = getAQILevel(aqiLevel);
   
-  const handleFavoriteClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    try {
-      await toggleFavorite.mutateAsync({
-        cityId: city.id,
-        isFavorite: !city.isFavorite,
-      });
-      toast({
-        title: city.isFavorite ? "Removed from favorites" : "Added to favorites",
-        description: `${city.name} ${city.isFavorite ? 'removed from' : 'added to'} your favorites`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update favorites",
-        variant: "destructive",
-      });
-    }
-  };
-
   const getLastUpdated = () => {
     if (!city.airQuality?.timestamp) return "No data";
     const time = new Date(city.airQuality.timestamp);
@@ -60,7 +34,7 @@ export function CityCard({ city, onClick }: CityCardProps) {
     return (
       <Card 
         className="p-4 shadow-lg cursor-pointer hover:shadow-xl transition-shadow bg-gray-100"
-        onClick={onClick}
+        onClick={() => onCityClick(city.id)}
       >
         <div className="flex justify-between items-start mb-3">
           <div>
@@ -68,17 +42,6 @@ export function CityCard({ city, onClick }: CityCardProps) {
             <p className="text-gray-600 text-sm">{city.province}</p>
             <p className="text-gray-500 text-xs mt-1">No data available</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleFavoriteClick}
-            disabled={toggleFavorite.isPending}
-            className="rounded-full hover:bg-gray-200"
-          >
-            <Heart 
-              className={`text-gray-400 ${city.isFavorite ? 'fill-red-500 text-red-500' : ''}`}
-            />
-          </Button>
         </div>
         <div className="flex items-center justify-center text-gray-500">
           <p>Tap to refresh data</p>
@@ -94,7 +57,7 @@ export function CityCard({ city, onClick }: CityCardProps) {
         backgroundColor: aqiConfig.color,
         color: aqiConfig.textColor 
       }}
-      onClick={onClick}
+      onClick={() => onCityClick(city.id)}
     >
       <div className="flex justify-between items-start mb-3">
         <div>
@@ -106,22 +69,9 @@ export function CityCard({ city, onClick }: CityCardProps) {
             Updated {getLastUpdated()}
           </p>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleFavoriteClick}
-          disabled={toggleFavorite.isPending}
-          className={`rounded-full ${aqiConfig.textColor === 'white' ? 'hover:bg-white/20' : 'hover:bg-black/10'}`}
-        >
-          <Heart 
-            className={`${city.isFavorite 
-              ? 'fill-red-500 text-red-500' 
-              : aqiConfig.textColor === 'white' 
-                ? 'text-white' 
-                : 'text-gray-600'
-            }`}
-          />
-        </Button>
+        <div className={`rounded-lg px-2 py-1 ${aqiConfig.textColor === 'white' ? 'bg-white/20' : 'bg-black/10'}`}>
+          <span className="text-sm font-medium">AQI</span>
+        </div>
       </div>
       
       <div className="flex items-center justify-between">
@@ -131,9 +81,11 @@ export function CityCard({ city, onClick }: CityCardProps) {
           </div>
           <div>
             <div className="text-3xl font-bold">{city.airQuality.aqi}</div>
-            <div className="text-sm font-medium">{aqiConfig.label}</div>
-            <div className={`text-xs ${aqiConfig.textColor === 'white' ? 'text-white/80' : 'text-gray-600'}`}>
-              Main: {city.airQuality.mainPollutant}
+            <div className={`text-sm font-medium ${aqiConfig.textColor === 'white' ? 'text-white/90' : 'text-gray-800'}`}>
+              {aqiConfig.label}
+            </div>
+            <div className={`text-xs ${aqiConfig.textColor === 'white' ? 'text-white/70' : 'text-gray-600'}`}>
+              {city.airQuality.mainPollutant}
             </div>
           </div>
         </div>
@@ -141,17 +93,13 @@ export function CityCard({ city, onClick }: CityCardProps) {
         <div className="text-right">
           <div className="flex items-center space-x-1 mb-1">
             {getWeatherIcon()}
-            <span className="text-lg font-semibold">{city.weather.temperature}°</span>
+            <span className="text-lg font-semibold">{city.weather.temperature}°C</span>
           </div>
-          <div className={`text-xs space-y-1 ${aqiConfig.textColor === 'white' ? 'text-white/80' : 'text-gray-600'}`}>
-            <div className="flex items-center space-x-1">
-              <Droplets className="h-3 w-3" />
-              <span>{city.weather.humidity}%</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <Wind className="h-3 w-3" />
-              <span>{city.weather.windSpeed} km/h</span>
-            </div>
+          <div className={`text-xs ${aqiConfig.textColor === 'white' ? 'text-white/70' : 'text-gray-600'}`}>
+            💧 {city.weather.humidity}%
+          </div>
+          <div className={`text-xs ${aqiConfig.textColor === 'white' ? 'text-white/70' : 'text-gray-600'}`}>
+            💨 {city.weather.windSpeed} km/h
           </div>
         </div>
       </div>
