@@ -4,11 +4,13 @@ import { CityCard } from "@/components/city-card";
 import { BottomNav } from "@/components/bottom-nav";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useCities, type CityWithData } from "@/lib/api";
 import { useLocation } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Navigation } from "lucide-react";
+import { Navigation, Trophy, AlertTriangle } from "lucide-react";
+import { getAQILevel } from "@/lib/constants";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -19,6 +21,21 @@ export default function Home() {
   
   const { data: cities, isLoading, error } = useCities();
   const { toast } = useToast();
+
+  // Get Nepal rankings from the current cities
+  const getNepalRankings = () => {
+    if (!cities) return { cleanest: [], mostPolluted: [] };
+    
+    const citiesWithAQI = cities.filter(city => city.airQuality?.aqi);
+    const sortedByAQI = [...citiesWithAQI].sort((a, b) => (a.airQuality?.aqi || 0) - (b.airQuality?.aqi || 0));
+    
+    return {
+      cleanest: sortedByAQI.slice(0, 3), // Top 3 cleanest
+      mostPolluted: sortedByAQI.slice(-3).reverse() // Top 3 most polluted
+    };
+  };
+
+  const nepalRankings = getNepalRankings();
 
   const fetchLocationData = async (lat: number, lon: number) => {
     setLoadingLocation(true);
@@ -202,6 +219,97 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* Nepal Rankings Section */}
+        {!isLoading && cities && cities.length > 0 && (
+          <div className="p-4 border-t border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Nepal Air Quality Rankings</h3>
+            
+            <div className="space-y-4">
+              {/* Cleanest Cities */}
+              <div>
+                <div className="flex items-center mb-3">
+                  <Trophy className="h-5 w-5 text-green-600 mr-2" />
+                  <h4 className="text-md font-medium text-green-800">Cleanest Cities</h4>
+                </div>
+                <div className="space-y-2">
+                  {nepalRankings.cleanest.map((city, index) => {
+                    const aqiConfig = getAQILevel(city.airQuality?.aqi || 0);
+                    return (
+                      <div 
+                        key={city.id}
+                        className="flex items-center justify-between p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100 transition-colors"
+                        onClick={() => handleCityClick(city.id)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{city.name}</p>
+                            <p className="text-sm text-gray-600">{city.province}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge 
+                            className="w-16 justify-center text-xs"
+                            style={{ 
+                              backgroundColor: aqiConfig.color,
+                              color: aqiConfig.textColor 
+                            }}
+                          >
+                            AQI {city.airQuality?.aqi}
+                          </Badge>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Most Polluted Cities */}
+              <div>
+                <div className="flex items-center mb-3">
+                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
+                  <h4 className="text-md font-medium text-red-800">Most Polluted Cities</h4>
+                </div>
+                <div className="space-y-2">
+                  {nepalRankings.mostPolluted.map((city, index) => {
+                    const aqiConfig = getAQILevel(city.airQuality?.aqi || 0);
+                    return (
+                      <div 
+                        key={city.id}
+                        className="flex items-center justify-between p-3 bg-red-50 rounded-lg cursor-pointer hover:bg-red-100 transition-colors"
+                        onClick={() => handleCityClick(city.id)}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{city.name}</p>
+                            <p className="text-sm text-gray-600">{city.province}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Badge 
+                            className="w-16 justify-center text-xs"
+                            style={{ 
+                              backgroundColor: aqiConfig.color,
+                              color: aqiConfig.textColor 
+                            }}
+                          >
+                            AQI {city.airQuality?.aqi}
+                          </Badge>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       <BottomNav />
