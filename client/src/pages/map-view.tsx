@@ -30,98 +30,73 @@ export default function MapView() {
       return;
     }
 
-    try {
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/satellite-streets-v12',
-        center: [84.1240, 28.3949], // Center on Nepal
-        zoom: 6.5,
-        maxBounds: [
-          [79.5, 26.0], // Southwest coordinates
-          [88.5, 30.5]  // Northeast coordinates
-        ],
-        attributionControl: false,
-        cooperativeGestures: false, // Disable cooperative gestures to prevent conflicts
-        doubleClickZoom: true,
-        scrollZoom: true,
-        boxZoom: true,
-        dragRotate: false,
-        dragPan: true,
-        keyboard: true,
-        touchZoomRotate: true
-      });
+    let abortController = new AbortController();
 
-      map.current.on('load', () => {
-        console.log('Mapbox map loaded successfully');
-        
-        // Add navigation controls after map load to prevent signal issues
-        const navControl = new mapboxgl.NavigationControl({
-          showCompass: false,
-          showZoom: true,
-          visualizePitch: false
+    const initializeMap = async () => {
+      try {
+        map.current = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/satellite-streets-v12',
+          center: [84.1240, 28.3949],
+          zoom: 6.5,
+          maxBounds: [
+            [79.5, 26.0],
+            [88.5, 30.5]
+          ],
+          attributionControl: false,
+          cooperativeGestures: false,
+          doubleClickZoom: true,
+          scrollZoom: true,
+          boxZoom: true,
+          dragRotate: false,
+          dragPan: true,
+          keyboard: true,
+          touchZoomRotate: true
         });
-        
-        try {
-          map.current?.addControl(navControl, 'top-right');
-        } catch (e) {
-          console.warn('Navigation control add failed:', e);
+
+        // Simple load handler
+        map.current.once('load', () => {
+          if (abortController.signal.aborted) return;
+          
+          console.log('Mapbox map loaded successfully');
+          
+          // Add navigation controls with minimal error handling
+          try {
+            const navControl = new mapboxgl.NavigationControl({
+              showCompass: false,
+              showZoom: true,
+              visualizePitch: false
+            });
+            map.current?.addControl(navControl, 'top-right');
+          } catch (e) {
+            // Silently fail if controls can't be added
+          }
+        });
+
+        // Minimal error handler
+        map.current.on('error', (e) => {
+          if (!abortController.signal.aborted) {
+            console.error('Mapbox error:', e);
+          }
+        });
+
+      } catch (error) {
+        if (!abortController.signal.aborted) {
+          console.error('Failed to initialize Mapbox:', error);
         }
-      });
+      }
+    };
 
-      map.current.on('error', (e) => {
-        console.error('Mapbox error:', e);
-      });
-
-      // Add comprehensive zoom event handling to prevent signal abort errors
-      map.current.on('zoomstart', (e) => {
-        try {
-          // Handle zoom start without signal abort
-        } catch (err) {
-          console.warn('Zoom start handler error:', err);
-        }
-      });
-
-      map.current.on('zoom', (e) => {
-        try {
-          // Handle zoom progress without signal abort
-        } catch (err) {
-          console.warn('Zoom handler error:', err);
-        }
-      });
-
-      map.current.on('zoomend', (e) => {
-        try {
-          // Handle zoom end without signal abort
-        } catch (err) {
-          console.warn('Zoom end handler error:', err);
-        }
-      });
-
-    } catch (error) {
-      console.error('Failed to initialize Mapbox:', error);
-    }
+    initializeMap();
 
     return () => {
+      abortController.abort();
+      
       if (map.current) {
         try {
-          // Remove all event listeners to prevent signal abort errors
-          map.current.off();
-          
-          // Remove all controls
-          const controls = map.current._controls;
-          if (controls) {
-            controls.forEach((control: any) => {
-              try {
-                map.current?.removeControl(control);
-              } catch (e) {
-                // Ignore control removal errors
-              }
-            });
-          }
-          
           map.current.remove();
         } catch (e) {
-          console.warn('Map cleanup error:', e);
+          // Ignore cleanup errors
         } finally {
           map.current = null;
         }
