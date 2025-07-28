@@ -1,0 +1,192 @@
+logo
+Weather in your city
+Guide
+API
+Dashboards
+Marketplace
+Pricing
+Maps
+Our Initiatives
+Partners
+Blog
+For Business
+koiralaprijun
+Support centre
+Air Pollution API
+Home
+API
+Air Pollution API
+Air Pollution API concept
+Current air pollution data
+Forecast air pollution data
+Historical air pollution data
+Air Pollution API response
+Example of API response
+Fields in API response
+Air Pollution Index levels scale
+Air Pollution API concept
+Air Pollution API provides current, forecast and historical air pollution data for any coordinates on the globe.
+
+Besides basic Air Quality Index, the API returns data about polluting gases, such as Carbon monoxide (CO), Nitrogen monoxide (NO), Nitrogen dioxide (NO2), Ozone (O3), Sulphur dioxide (SO2), Ammonia (NH3), and particulates (PM2.5 and PM10).
+
+Air pollution forecast is available for 4 days with hourly granularity. Historical data is accessible from 27th November 2020.
+
+Here is a description of OpenWeather scale for Air Quality Index levels:
+
+Qualitative name	Index	Pollutant concentration in μg/m3
+SO2	NO2	PM10	PM2.5	O3	CO
+Good	1	[0; 20)	[0; 40)	[0; 20)	[0; 10)	[0; 60)	[0; 4400)
+Fair	2	[20; 80)	[40; 70)	[20; 50)	[10; 25)	[60; 100)	[4400; 9400)
+Moderate	3	[80; 250)	[70; 150)	[50; 100)	[25; 50)	[100; 140)	[9400-12400)
+Poor	4	[250; 350)	[150; 200)	[100; 200)	[50; 75)	[140; 180)	[12400; 15400)
+Very Poor	5	⩾350	⩾200	⩾200	⩾75	⩾180	⩾15400
+Other parameters that do not affect the AQI calculation:
+
+NH3: min value 0.1 - max value 200
+NO: min value 0.1 - max value 100
+Please find Air Quality Index levels scales used in UK, Europe, USA and Mainland China in the "Air Pollution Index levels scale" page.
+
+Current air pollution data
+API call
+
+http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API key}
+
+Parameters
+lat	required	Latitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+lon	required	Longitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+appid	required	Your unique API key (you can always find it on your account page under the "API key" tab)
+Example of API request
+
+http://api.openweathermap.org/data/2.5/air_pollution?lat=50&lon=50&appid={API key}
+
+
+Forecast air pollution data
+API call
+
+http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat={lat}&lon={lon}&appid={API key}
+
+Parameters
+lat	required	Latitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+lon	required	Longitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+appid	required	Your unique API key (you can always find it on your account page under the "API key" tab)
+Example of API request
+
+http://api.openweathermap.org/data/2.5/air_pollution/forecast?lat=50&lon=50&appid={API key}
+
+
+Historical air pollution data
+API call
+
+http://api.openweathermap.org/data/2.5/air_pollution/history?lat={lat}&lon={lon}&start={start}&end={end}&appid={API key}
+
+Parameters
+lat	required	Latitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+lon	required	Longitude. If you need the geocoder to automatic convert city names and zip-codes to geo coordinates and the other way around, please use our Geocoding API
+start	required	Start date (unix time, UTC time zone), e.g. start=1606488670
+end	required	End date (unix time, UTC time zone), e.g. end=1606747870
+appid	required	Your unique API key (you can always find it on your account page under the "API key" tab)
+Example of API request
+
+http://api.openweathermap.org/data/2.5/air_pollution/history?lat=50&lon=50&start=1606223802&end=1606482999&appid={API key}
+
+
+Air Pollution API response
+Example of the API response
+Example of the API response
+
+
+                   
+{
+  "coord":[
+    50,
+    50
+  ],
+  "list":[
+    {
+      "dt":1605182400,
+      "main":{
+        "aqi":1
+      },
+      "components":{
+        "co":201.94053649902344,
+        "no":0.01877197064459324,
+        "no2":0.7711350917816162,
+        "o3":68.66455078125,
+        "so2":0.6407499313354492,
+        "pm2_5":0.5,
+        "pm10":0.540438711643219,
+        "nh3":0.12369127571582794
+      }
+    }
+  ]
+}
+                   
+                
+Fields in API response
+coord Coordinates from the specified location (latitude, longitude)
+list
+dt Date and time, Unix, UTC
+main
+main.aqi Air Quality Index. Possible values: 1, 2, 3, 4, 5. Where 1 = Good, 2 = Fair, 3 = Moderate, 4 = Poor, 5 = Very Poor. If you want to recalculate Air Quality indexes according UK, Europe, USA and Mainland China scales please use "Air Pollution Index levels scale" page
+components
+components.co Сoncentration of CO (Carbon monoxide), μg/m3
+components.no Сoncentration of NO (Nitrogen monoxide), μg/m3
+components.no2 Сoncentration of NO2 (Nitrogen dioxide), μg/m3
+components.o3 Сoncentration of O3 (Ozone), μg/m3
+components.so2 Сoncentration of SO2 (Sulphur dioxide), μg/m3
+components.pm2_5 Сoncentration of PM2.5 (Fine particles matter), μg/m3
+components.pm10 Сoncentration of PM10 (Coarse particulate matter), μg/m3
+components.nh3 Сoncentration of NH3 (Ammonia), μg/m3
+Product Collections
+
+Current and Forecast APIs
+Historical Weather Data
+Weather Maps
+Weather Dashboard
+Widgets
+Subscription
+
+How to start
+Pricing
+Subscribe for free
+FAQ
+Company
+
+OpenWeather is a team of IT experts and data scientists that has been practising deep weather data science. For each point on the globe, OpenWeather provides historical, current and forecasted weather data via light-speed APIs. Headquarters in London, UK.
+
+Technologies
+
+Our technology
+Accuracy and quality of weather data
+Connect your weather station
+Terms & Conditions
+
+Terms and conditions of sale
+Privacy Policy
+Website terms and conditions
+About us
+Our offices
+Blog
+OpenWeather for Business
+Ulla, OpenWeather AI assistant
+Ask a question
+Download OpenWeather app
+
+Get it on AppStore Get it on Google Play
+RMets logoCNB Business logo
+Supplier of Achilles UVDB community
+© 2012 — 2025 OpenWeather ® All rights reserved
+
+facebook icon
+x icon
+linkedin icon 
+meduim icon
+telegram icon
+github icon
+We use cookies to personalize content and to analyze our traffic. Please decide if you are willing to accept cookies from our website.
+Advanced Settings
+Decline
+Accept
+×
+Ulla the Bot
+Ulla Weather Assistant
