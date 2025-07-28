@@ -71,9 +71,9 @@ export default function Rankings() {
               <p className="text-sm text-gray-600">{city.country}</p>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end">
             <div 
-              className="text-2xl font-bold px-3 py-1 rounded-lg pt-[3px] pb-[3px]"
+              className="text-2xl font-bold px-3 py-1 rounded-lg w-16 text-center"
               style={{ 
                 backgroundColor: aqiConfig.color,
                 color: aqiConfig.textColor 
@@ -81,7 +81,7 @@ export default function Rankings() {
             >
               {city.aqi}
             </div>
-            <p className="text-xs text-gray-600 mt-1">{aqiConfig.label}</p>
+            <p className="text-xs text-gray-600 mt-1 max-w-24 text-right leading-tight">{aqiConfig.label}</p>
           </div>
         </div>
       </Card>

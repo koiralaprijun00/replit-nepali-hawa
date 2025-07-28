@@ -34,15 +34,17 @@ Preferred communication style: Simple, everyday language.
 ## Key Components
 
 ### Data Models
-- **Cities**: Nepal cities with coordinates and favorite status
+- **Cities**: Nepal cities with coordinates (favorites functionality removed)
 - **Air Quality**: EPA AQI calculated from PM2.5 data with pollutant breakdown (PM2.5, PM10, O3, CO, NO2, SO2, NH3)
 - **Weather**: Temperature, humidity, wind, pressure, and weather conditions
 - **Hourly Forecast**: Short-term weather and AQI predictions based on EPA standards
+- **Rankings**: Global air quality rankings for cleanest and most polluted cities
 
 ### UI Components
-- **CityCard**: Displays city overview with AQI status and weather
+- **CityCard**: Displays city overview with AQI status and weather (no favorites)
 - **Header**: App navigation with search and refresh functionality
-- **BottomNav**: Mobile navigation bar with placeholder actions
+- **BottomNav**: Mobile navigation with Home, Map, Trends, Rankings, Settings
+- **Rankings**: Global air quality leaderboard with trophy icons and color-coded badges
 - **Comprehensive UI Kit**: Full shadcn/ui component library integration
 
 ### External API Integration
@@ -55,10 +57,11 @@ Preferred communication style: Simple, everyday language.
 ## Data Flow
 
 1. **Initial Load**: App fetches all Nepal cities from in-memory storage
-2. **Data Refresh**: Manual refresh triggers OpenWeather API calls for all cities
-3. **Individual City**: Detailed view fetches comprehensive data including hourly forecast
-4. **Caching Strategy**: TanStack Query provides 5-minute stale time for efficient data management
-5. **Optimistic Updates**: Immediate UI feedback for user actions like favoriting cities
+2. **Current Location**: Automatic geolocation with real-time AQI data fetching
+3. **Data Refresh**: Manual refresh triggers OpenWeather API calls for all cities
+4. **Individual City**: Detailed view fetches comprehensive data including hourly forecast
+5. **Global Rankings**: Real-time fetching of 20 major world cities for air quality rankings
+6. **Caching Strategy**: TanStack Query provides 5-minute stale time for efficient data management
 
 ## External Dependencies
 
