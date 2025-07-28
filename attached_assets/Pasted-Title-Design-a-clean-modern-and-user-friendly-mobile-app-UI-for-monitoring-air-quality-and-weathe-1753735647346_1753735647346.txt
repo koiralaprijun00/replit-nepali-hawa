@@ -1,0 +1,95 @@
+Title:
+Design a clean, modern, and user-friendly mobile app UI for monitoring air quality and weather data in cities of Nepal using OpenWeather API.
+
+1. Objective:
+Build an app that displays real-time Air Quality Index (AQI) and weather data.
+
+Primary focus: Air quality metrics (AQI, pollutants, health recommendations).
+
+Secondary focus: Weather information (temperature, humidity, wind speed, forecast).
+
+Audience: General public who need quick, reliable air quality data.
+
+2. Design Guidelines:
+Visual Style:
+Clean, minimal, and flat design (inspired by iOS and modern Android apps).
+
+Soft gradients and color-coded AQI levels for easy recognition.
+
+Rounded cards, sufficient white space, and easy-to-read typography.
+
+Consistent iconography for weather and air quality elements.
+
+Color Palette:
+Use AQI color standards (Green = Good, Yellow = Moderate, Orange = Unhealthy for sensitive groups, Red = Unhealthy, Purple = Very Unhealthy, Maroon = Hazardous).
+
+Neutral or light backgrounds for readability.
+
+Weather data in softer complementary colors.
+
+3. Key Screens:
+A. Home Screen (City Overview)
+Display a list of major cities of Nepal with:
+
+City name, AQI number, status (Good/Moderate/Unhealthy), main pollutant.
+
+Temperature and weather icon.
+
+Card layout with AQI-based background colors.
+
+Option to favorite cities for quick access.
+
+A top search bar for finding other locations.
+
+B. City Detail Screen
+Prominent AQI number and status at the top.
+
+Air quality breakdown: PM2.5, PM10, O3, CO, NO2, SO2.
+
+Weather data: temperature, wind speed, humidity, pressure.
+
+Health recommendations (based on AQI level).
+
+Hourly and 7-day forecast charts (AQI & weather trends).
+
+C. Map View (Optional)
+Interactive map showing air quality levels by city or monitoring station.
+
+D. Alerts/Notification Screen
+Push notification settings for unhealthy air quality levels.
+
+4. UX Flow:
+Simple navigation with bottom tab bar: Home, Map, Forecast, Notifications, Settings.
+
+Quick switch between favorites and all cities.
+
+Easy access to detailed pollutant info and health tips.
+
+5. Data & Functionality:
+OpenWeather API: Air pollution endpoint for AQI & pollutant levels.
+
+Weather endpoint: Temperature, humidity, wind speed, forecasts.
+
+Real-time refresh with caching for offline access.
+
+6. Typography & Icons:
+Use Google Fonts (e.g., Roboto or Inter) for readability.
+
+Weather icons (sun, rain, cloud, wind) should be simple and line-based.
+
+AQI icons (face masks, lungs, etc.) optional but helpful.
+
+7. Inspirations (based on provided images):
+Card-based layout from IQAir app.
+
+Color-coded AQI categories like AirVisual.
+
+Minimal gradients and soft transitions like Netatmo Healthy Home Coach app (image 1).
+
+8. Deliverables:
+Full UI kit with color codes, typography, and icon pack.
+
+High-fidelity mockups for Android & iOS.
+
+Optionally, interactive prototype showing transitions and animations.
+
