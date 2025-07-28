@@ -252,7 +252,7 @@ export default function Home() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <Badge 
-                            className="w-16 h-7 justify-center text-xs rounded-lg flex items-center"
+                            className="min-w-[68px] h-7 px-2 justify-center text-xs rounded-lg flex items-center font-medium"
                             style={{ 
                               backgroundColor: aqiConfig.color,
                               color: aqiConfig.textColor 
@@ -293,7 +293,7 @@ export default function Home() {
                         </div>
                         <div className="flex items-center space-x-2">
                           <Badge 
-                            className="w-16 h-7 justify-center text-xs rounded-lg flex items-center"
+                            className="min-w-[68px] h-7 px-2 justify-center text-xs rounded-lg flex items-center font-medium"
                             style={{ 
                               backgroundColor: aqiConfig.color,
                               color: aqiConfig.textColor 
