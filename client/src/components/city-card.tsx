@@ -33,7 +33,7 @@ export function CityCard({ city, onCityClick }: CityCardProps) {
   if (!city.airQuality || !city.weather) {
     return (
       <Card 
-        className="p-4 shadow-lg cursor-pointer hover:shadow-xl transition-shadow bg-gray-100"
+        className="p-4 shadow-lg cursor-pointer hover:shadow-xl transition-shadow bg-gray-100 w-full h-48"
         onClick={() => onCityClick(city.id)}
       >
         <div className="flex justify-between items-start mb-3">
@@ -52,7 +52,7 @@ export function CityCard({ city, onCityClick }: CityCardProps) {
 
   return (
     <Card 
-      className="p-4 shadow-lg cursor-pointer hover:shadow-xl transition-shadow rounded-xl"
+      className="p-4 shadow-lg cursor-pointer hover:shadow-xl transition-shadow rounded-xl w-full h-48"
       style={{ 
         backgroundColor: aqiConfig.color,
         color: aqiConfig.textColor 

@@ -163,7 +163,7 @@ export default function Home() {
             {isLoading ? (
               // Loading skeletons
               Array.from({ length: 6 }).map((_, index) => (
-                <div key={index} className="min-w-64 bg-gray-100 rounded-xl p-4 space-y-3">
+                <div key={index} className="w-64 flex-shrink-0 bg-gray-100 rounded-xl p-4 space-y-3">
                   <div className="flex justify-between items-start">
                     <div className="space-y-2">
                       <Skeleton className="h-6 w-24" />
@@ -191,7 +191,7 @@ export default function Home() {
               ))
             ) : cities ? (
               cities.map((city) => (
-                <div key={city.id} className="min-w-64">
+                <div key={city.id} className="w-64 flex-shrink-0">
                   <CityCard city={city} onCityClick={handleCityClick} />
                 </div>
               ))
