@@ -4,7 +4,7 @@ import { CityCard } from "@/components/city-card";
 import { BottomNav } from "@/components/bottom-nav";
 import { InstallPrompt } from "@/components/install-prompt";
 import { WidgetCard } from "@/components/widget-card";
-import { QuickActions } from "@/components/quick-actions";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -121,15 +121,6 @@ export default function Home() {
 
       {/* Content */}
       <div className="pb-20">
-        
-        {/* Quick Actions */}
-        <div className="p-4 pb-2">
-          <QuickActions 
-            onRefresh={() => window.location.reload()}
-            isRefreshing={isLoading}
-          />
-        </div>
-
         {/* Current Location Section */}
         {currentLocation && (
           <div className="p-4 border-b border-gray-100">
