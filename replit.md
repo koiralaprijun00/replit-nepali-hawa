@@ -44,12 +44,13 @@ Preferred communication style: Simple, everyday language.
 - **CityCard**: Displays city overview with AQI status and weather (no favorites)
 - **WidgetCard**: Compact mobile-optimized card for widget-like display with AQI, weather, and actions
 - **Header**: App navigation with search and refresh functionality
-- **BottomNav**: Mobile navigation with Home, Map, Rankings, Settings (4 tabs)
+- **BottomNav**: Mobile navigation with Home, Map, Rankings, Learn (4 tabs)
 - **InstallPrompt**: Smart PWA installation prompt for Android/iOS with platform-specific instructions
 - **NotificationSettings**: Push notification configuration for air quality alerts with threshold settings
 - **Rankings**: Global air quality leaderboard with trophy icons and color-coded badges
 - **Map View**: Full-screen interactive map with colored AQI circles, search functionality, and IQAir Earth styling
-- **Settings**: Comprehensive app configuration including notifications, cache management, and data export
+- **Learn**: Educational content about air pollution, health effects, and protection measures tailored for Nepal
+- **Settings**: Comprehensive app configuration including notifications, cache management, and data export (accessible via Learn tab)
 - **Comprehensive UI Kit**: Full shadcn/ui component library integration
 
 ### External API Integration
