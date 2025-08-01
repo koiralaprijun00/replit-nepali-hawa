@@ -1,4 +1,4 @@
-import { Home, Map, Trophy, Settings, BookOpen } from "lucide-react";
+import { Home, Map, Trophy, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
