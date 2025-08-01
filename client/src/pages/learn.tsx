@@ -184,9 +184,19 @@ export default function Learn() {
               <Card key={index} className="p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <Badge className={`${level.color} ${level.textColor} min-w-[60px] text-center`}>
+                    <div 
+                      className={`font-bold text-sm px-3 py-2 rounded-md w-20 h-10 flex items-center justify-center text-center`}
+                      style={{ 
+                        backgroundColor: level.color.replace('bg-', '').includes('green') ? '#22c55e' :
+                                      level.color.replace('bg-', '').includes('yellow') ? '#eab308' :
+                                      level.color.replace('bg-', '').includes('orange') ? '#f97316' :
+                                      level.color.replace('bg-', '').includes('red') ? '#ef4444' :
+                                      level.color.replace('bg-', '').includes('purple') ? '#a855f7' : '#7f1d1d',
+                        color: level.textColor.includes('white') ? '#ffffff' : '#000000'
+                      }}
+                    >
                       {level.range}
-                    </Badge>
+                    </div>
                     <div>
                       <p className="font-medium text-sm text-gray-900">{level.label}</p>
                       <p className="text-xs text-gray-600">{level.description}</p>

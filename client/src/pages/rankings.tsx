@@ -58,7 +58,7 @@ export default function Rankings() {
     return (
       <Card
         key={`${city.city}-${city.country}-${index}`}
-        className="p-4 mb-3"
+        className="p-3 mb-2"
         style={{ borderLeft: `4px solid ${aqiConfig.color}` }}
       >
         <div className="flex items-center justify-between">
@@ -67,13 +67,13 @@ export default function Rankings() {
               {getRankIcon(city.rank)}
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900">{city.city}</h3>
-              <p className="text-sm text-gray-600">{city.country}</p>
+              <h3 className="font-medium text-gray-900 text-sm">{city.city}</h3>
+              <p className="text-xs text-gray-600">{city.country}</p>
             </div>
           </div>
-          <div className="text-right flex flex-col items-end">
+          <div className="text-right flex items-center space-x-2">
             <div 
-              className="text-2xl font-bold px-3 py-1 rounded-lg w-16 text-center"
+              className="text-lg font-bold px-2 py-1 rounded w-12 text-center"
               style={{ 
                 backgroundColor: aqiConfig.color,
                 color: aqiConfig.textColor 
@@ -81,7 +81,7 @@ export default function Rankings() {
             >
               {city.aqi}
             </div>
-            <p className="text-xs text-gray-600 mt-1 max-w-24 text-right leading-tight">{aqiConfig.label}</p>
+            <p className="text-xs text-gray-600 leading-tight">{aqiConfig.label}</p>
           </div>
         </div>
       </Card>
@@ -91,7 +91,7 @@ export default function Rankings() {
   if (error) {
     return (
       <div className="max-w-sm mx-auto bg-white min-h-screen">
-        <Header onSearchClick={() => {}} onNotificationClick={() => {}} />
+        <Header />
         <div className="p-4 text-center">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <p className="text-red-500 mb-4">{error}</p>
@@ -104,7 +104,7 @@ export default function Rankings() {
 
   return (
     <div className="max-w-sm mx-auto bg-white min-h-screen">
-      <Header onSearchClick={() => {}} onNotificationClick={() => {}} />
+      <Header />
       
       <div className="bg-white px-4 py-3 border-b border-gray-100">
         <h2 className="text-xl font-bold text-gray-900 mb-3">Global Air Quality Rankings</h2>
