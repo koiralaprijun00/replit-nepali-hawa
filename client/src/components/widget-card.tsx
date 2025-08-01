@@ -14,8 +14,17 @@ interface WidgetCardProps {
 export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: WidgetCardProps) {
   const aqiLevel = getAQILevel(city.airQuality?.aqi || 0);
   
+  // Use AQI-based background for current location, default for others
+  const cardStyle = isCurrentLocation && city.airQuality?.aqi ? {
+    background: `linear-gradient(135deg, ${aqiLevel.color}15, ${aqiLevel.color}25)`,
+    borderColor: `${aqiLevel.color}40`
+  } : {};
+  
   return (
-    <Card className="p-4 bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
+    <Card 
+      className={`p-4 ${isCurrentLocation && city.airQuality?.aqi ? 'border-2' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'} shadow-sm`}
+      style={cardStyle}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-2">
