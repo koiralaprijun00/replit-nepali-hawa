@@ -134,7 +134,7 @@ export function WidgetCard({
               {city.airQuality.aqi}
             </Badge>
             {isCurrentLocation && (
-              <span 
+              <span
                 className="text-xs font-semibold mt-1"
                 style={{ color: textColor }}
               >
@@ -157,10 +157,7 @@ export function WidgetCard({
             </span>
           </div>
           {!isCurrentLocation && (
-            <p
-              className="text-xs"
-              style={{ color: "#6b7280" }}
-            >
+            <p className="text-xs" style={{ color: "#6b7280" }}>
               Air quality is {aqiLevel.label.toLowerCase()}
             </p>
           )}
@@ -249,30 +246,30 @@ export function WidgetCard({
 
       {/* Activity Alert - Only for current location with AQI data */}
       {isCurrentLocation && city.airQuality?.aqi && (
-        <div 
-          className="p-3 rounded-lg mt-4"
+        <div
+          className="p-3 rounded-lg mt-4 mb-2"
           style={{
-            backgroundColor: isLightText 
-              ? "rgba(255,255,255,0.15)" 
+            backgroundColor: isLightText
+              ? "rgba(255,255,255,0.15)"
               : "rgba(0,0,0,0.15)",
-            border: `1px solid ${isLightText ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}`
+            border: `1px solid ${isLightText ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}`,
           }}
         >
           <div className="flex items-center space-x-2 mb-1">
             <span className="text-lg">{activityAlert.icon}</span>
-            <span 
+            <span
               className="font-semibold text-sm"
               style={{ color: textColor }}
             >
               {activityAlert.message}
             </span>
           </div>
-          <p 
+          <p
             className="text-xs leading-relaxed"
-            style={{ 
-              color: isLightText 
-                ? "rgba(255,255,255,0.85)" 
-                : "rgba(31,41,55,0.8)" 
+            style={{
+              color: isLightText
+                ? "rgba(255,255,255,0.85)"
+                : "rgba(31,41,55,0.8)",
             }}
           >
             {activityAlert.details}
@@ -282,31 +279,33 @@ export function WidgetCard({
 
       {/* Action Button */}
       {onViewDetails && (
-        <Button
-          variant="outline"
-          size={isCurrentLocation ? "default" : "sm"}
-          onClick={onViewDetails}
-          className={`w-full ${
-            isCurrentLocation
-              ? "h-10 text-sm border-2 transition-all duration-200"
-              : "h-8 text-xs bg-white hover:bg-gray-50"
-          } transition-all duration-200`}
-          style={
-            isCurrentLocation
-              ? {
-                  backgroundColor: isLightText
-                    ? "rgba(255,255,255,0.2)"
-                    : "rgba(0,0,0,0.2)",
-                  borderColor: isLightText
-                    ? "rgba(255,255,255,0.4)"
-                    : "rgba(0,0,0,0.3)",
-                  color: textColor,
-                }
-              : {}
-          }
-        >
-          View Details
-        </Button>
+        <div className="flex justify-center mt-4">
+          <Button
+            variant="outline"
+            size={isCurrentLocation ? "default" : "sm"}
+            onClick={onViewDetails}
+            className={`w-1/2 ${
+              isCurrentLocation
+                ? "h-10 text-sm border-2 transition-all duration-200"
+                : "h-8 text-xs bg-white hover:bg-gray-50"
+            } transition-all duration-200`}
+            style={
+              isCurrentLocation
+                ? {
+                    backgroundColor: isLightText
+                      ? "rgba(255,255,255,0.2)"
+                      : "rgba(0,0,0,0.2)",
+                    borderColor: isLightText
+                      ? "rgba(255,255,255,0.4)"
+                      : "rgba(0,0,0,0.3)",
+                    color: textColor,
+                  }
+                : {}
+            }
+          >
+            View Details
+          </Button>
+        </div>
       )}
 
       {/* Last Updated - Only show for non-current location */}
