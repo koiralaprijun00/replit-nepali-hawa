@@ -7,14 +7,16 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
-import { Settings, Bell, Database, RefreshCw, Info, Shield, Download } from "lucide-react";
+import { Settings, Bell, Database, RefreshCw, Info, Shield, Download, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(true);
   const [cacheSize, setCacheSize] = useState("2.1 MB");
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     // Load settings from localStorage
@@ -142,6 +144,32 @@ export default function SettingsPage() {
       {/* Content */}
       <div className="pb-20 space-y-4 p-4">
         
+        {/* Quick Access */}
+        <div>
+          <h3 className="text-md font-semibold text-gray-900 mb-3">
+            Quick Access
+          </h3>
+          <Card className="p-4 space-y-3">
+            <div 
+              className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+              onClick={() => setLocation('/favorites')}
+            >
+              <div className="flex items-center space-x-3">
+                <Star className="h-4 w-4 text-blue-600" />
+                <div>
+                  <Label className="text-sm font-medium cursor-pointer">
+                    My Favorite Places
+                  </Label>
+                  <p className="text-xs text-gray-500">
+                    Manage your saved locations
+                  </p>
+                </div>
+              </div>
+              <div className="text-gray-400">›</div>
+            </div>
+          </Card>
+        </div>
+
         {/* Notifications Section */}
         <div>
           <h3 className="text-md font-semibold text-gray-900 mb-3 flex items-center">

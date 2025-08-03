@@ -1,8 +1,8 @@
-import { ArrowLeft, Share2, ExternalLink, RotateCcw } from "lucide-react";
+import { ArrowLeft, Share2, ExternalLink, RotateCcw, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCity, useRefreshCity } from "@/lib/api";
+import { useCity, useRefreshCity, useFavoriteStatus, useAddFavorite, useDeleteFavorite, useFavorites } from "@/lib/api";
 import { useLocation } from "wouter";
 import { getAQILevel, getHealthRecommendations, WEATHER_ICONS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,15 @@ export default function CityDetail({ params }: CityDetailProps) {
   const { data: city, isLoading, error } = useCity(params.id, lat, lon);
   const refreshCity = useRefreshCity();
   const { toast } = useToast();
+
+  // Favorites functionality - only for regular cities, not current location
+  const isCurrentLocation = params.id === 'current-location';
+  const { data: favoriteStatus } = useFavoriteStatus(isCurrentLocation ? '' : params.id);
+  const { data: favorites } = useFavorites();
+  const addFavorite = useAddFavorite();
+  const deleteFavorite = useDeleteFavorite();
+
+  const isFavorited = favoriteStatus?.isFavorited || false;
 
   const handleBack = () => {
     setLocation('/');
@@ -61,6 +70,45 @@ export default function CityDetail({ params }: CityDetailProps) {
       toast({
         title: "Error",
         description: "Failed to refresh data",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!city || isCurrentLocation) return;
+
+    try {
+      if (isFavorited) {
+        // Find and remove the favorite
+        const favorite = favorites?.find(f => f.cityId === city.id);
+        if (favorite) {
+          await deleteFavorite.mutateAsync(favorite.id);
+          toast({
+            title: "Removed from favorites",
+            description: `${city.name} has been removed from your favorites`,
+          });
+        }
+      } else {
+        // Add to favorites
+        const order = favorites ? favorites.length : 0;
+        await addFavorite.mutateAsync({
+          cityId: city.id,
+          customLabel: city.name,
+          icon: '📍',
+          isCurrentLocation: false,
+          order,
+          createdAt: new Date().toISOString()
+        });
+        toast({
+          title: "Added to favorites",
+          description: `${city.name} has been added to your favorites`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: isFavorited ? "Failed to remove from favorites" : "Failed to add to favorites",
         variant: "destructive",
       });
     }
@@ -160,6 +208,18 @@ export default function CityDetail({ params }: CityDetailProps) {
           </Button>
           <h2 className="text-lg font-semibold">{city.name}</h2>
           <div className="flex space-x-1">
+            {!isCurrentLocation && (
+              <Button 
+                variant="ghost" 
+                size="icon"
+                onClick={handleToggleFavorite}
+                disabled={addFavorite.isPending || deleteFavorite.isPending}
+                className="rounded-full hover:bg-white/20"
+                style={{ color: aqiConfig.textColor }}
+              >
+                <Star className={`h-5 w-5 ${isFavorited ? 'fill-current' : ''}`} />
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               size="icon"

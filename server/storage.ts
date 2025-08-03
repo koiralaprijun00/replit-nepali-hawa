@@ -1,4 +1,4 @@
-import { type City, type AirQuality, type Weather, type HourlyForecast, type InsertCity, type InsertAirQuality, type InsertWeather, type InsertHourlyForecast } from "@shared/schema";
+import { type City, type AirQuality, type Weather, type HourlyForecast, type FavoriteLocation, type InsertCity, type InsertAirQuality, type InsertWeather, type InsertHourlyForecast, type InsertFavoriteLocation } from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -23,6 +23,14 @@ export interface IStorage {
   getHourlyForecast(cityId: string): Promise<HourlyForecast[]>;
   createHourlyForecast(forecast: InsertHourlyForecast): Promise<HourlyForecast>;
   clearHourlyForecast(cityId: string): Promise<void>;
+  
+  // Favorite Locations
+  getFavoriteLocations(): Promise<FavoriteLocation[]>;
+  getFavoriteLocation(id: string): Promise<FavoriteLocation | undefined>;
+  createFavoriteLocation(favorite: InsertFavoriteLocation): Promise<FavoriteLocation>;
+  updateFavoriteLocation(id: string, updates: Partial<FavoriteLocation>): Promise<FavoriteLocation | undefined>;
+  deleteFavoriteLocation(id: string): Promise<boolean>;
+  isCityFavorited(cityId: string): Promise<boolean>;
 }
 
 export class MemStorage implements IStorage {
@@ -30,12 +38,14 @@ export class MemStorage implements IStorage {
   private airQuality: Map<string, AirQuality>;
   private weather: Map<string, Weather>;
   private hourlyForecast: Map<string, HourlyForecast[]>;
+  private favoriteLocations: Map<string, FavoriteLocation>;
 
   constructor() {
     this.cities = new Map();
     this.airQuality = new Map();
     this.weather = new Map();
     this.hourlyForecast = new Map();
+    this.favoriteLocations = new Map();
     
     // Initialize with Nepal cities
     this.initializeNepalCities();
@@ -184,6 +194,40 @@ export class MemStorage implements IStorage {
 
   async clearHourlyForecast(cityId: string): Promise<void> {
     this.hourlyForecast.delete(cityId);
+  }
+
+  // Favorite Locations
+  async getFavoriteLocations(): Promise<FavoriteLocation[]> {
+    const favorites = Array.from(this.favoriteLocations.values());
+    return favorites.sort((a, b) => a.order - b.order);
+  }
+
+  async getFavoriteLocation(id: string): Promise<FavoriteLocation | undefined> {
+    return this.favoriteLocations.get(id);
+  }
+
+  async createFavoriteLocation(favorite: InsertFavoriteLocation): Promise<FavoriteLocation> {
+    const id = randomUUID();
+    const newFavorite: FavoriteLocation = { ...favorite, id };
+    this.favoriteLocations.set(id, newFavorite);
+    return newFavorite;
+  }
+
+  async updateFavoriteLocation(id: string, updates: Partial<FavoriteLocation>): Promise<FavoriteLocation | undefined> {
+    const existing = this.favoriteLocations.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...updates };
+    this.favoriteLocations.set(id, updated);
+    return updated;
+  }
+
+  async deleteFavoriteLocation(id: string): Promise<boolean> {
+    return this.favoriteLocations.delete(id);
+  }
+
+  async isCityFavorited(cityId: string): Promise<boolean> {
+    return Array.from(this.favoriteLocations.values()).some(fav => fav.cityId === cityId);
   }
 }
 

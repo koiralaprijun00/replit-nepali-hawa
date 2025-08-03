@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertCitySchema } from "@shared/schema";
+import { insertCitySchema, insertFavoriteLocationSchema } from "@shared/schema";
 
 const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || process.env.VITE_OPENWEATHER_API_KEY || "your_api_key_here";
 
@@ -572,6 +572,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Failed to fetch rankings data", 
         error: error instanceof Error ? error.message : "Unknown error" 
       });
+    }
+  });
+
+  // Favorite Locations API
+  // Get all favorite locations
+  app.get("/api/favorites", async (req, res) => {
+    try {
+      const favorites = await storage.getFavoriteLocations();
+      
+      // Get city data and air quality for each favorite
+      const favoritesWithData = await Promise.all(
+        favorites.map(async (favorite) => {
+          const city = await storage.getCity(favorite.cityId);
+          const airQuality = await storage.getAirQuality(favorite.cityId);
+          const weather = await storage.getWeather(favorite.cityId);
+          
+          return {
+            ...favorite,
+            city,
+            airQuality,
+            weather
+          };
+        })
+      );
+      
+      res.json(favoritesWithData);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+      res.status(500).json({ message: "Failed to fetch favorite locations" });
+    }
+  });
+
+  // Add a favorite location
+  app.post("/api/favorites", async (req, res) => {
+    try {
+      const favoriteData = insertFavoriteLocationSchema.parse(req.body);
+      
+      // Check if city exists
+      const city = await storage.getCity(favoriteData.cityId);
+      if (!city) {
+        return res.status(404).json({ message: "City not found" });
+      }
+      
+      // Check if already favorited
+      const alreadyFavorited = await storage.isCityFavorited(favoriteData.cityId);
+      if (alreadyFavorited) {
+        return res.status(400).json({ message: "City is already in favorites" });
+      }
+      
+      const favorite = await storage.createFavoriteLocation(favoriteData);
+      res.status(201).json(favorite);
+    } catch (error) {
+      console.error('Error creating favorite:', error);
+      res.status(500).json({ message: "Failed to create favorite location" });
+    }
+  });
+
+  // Update a favorite location
+  app.patch("/api/favorites/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const updated = await storage.updateFavoriteLocation(id, updates);
+      if (!updated) {
+        return res.status(404).json({ message: "Favorite location not found" });
+      }
+      
+      res.json(updated);
+    } catch (error) {
+      console.error('Error updating favorite:', error);
+      res.status(500).json({ message: "Failed to update favorite location" });
+    }
+  });
+
+  // Delete a favorite location
+  app.delete("/api/favorites/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleted = await storage.deleteFavoriteLocation(id);
+      
+      if (!deleted) {
+        return res.status(404).json({ message: "Favorite location not found" });
+      }
+      
+      res.json({ message: "Favorite location deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting favorite:', error);
+      res.status(500).json({ message: "Failed to delete favorite location" });
+    }
+  });
+
+  // Check if a city is favorited
+  app.get("/api/favorites/check/:cityId", async (req, res) => {
+    try {
+      const { cityId } = req.params;
+      const isFavorited = await storage.isCityFavorited(cityId);
+      res.json({ isFavorited });
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+      res.status(500).json({ message: "Failed to check favorite status" });
     }
   });
 

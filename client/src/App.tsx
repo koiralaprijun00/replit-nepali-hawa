@@ -9,6 +9,7 @@ import MapView from "@/pages/map-view";
 import Rankings from "@/pages/rankings";
 import Learn from "@/pages/learn";
 import Settings from "@/pages/settings";
+import Favorites from "@/pages/favorites";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/rankings" component={Rankings} />
       <Route path="/learn" component={Learn} />
       <Route path="/settings" component={Settings} />
+      <Route path="/favorites" component={Favorites} />
       <Route component={NotFound} />
     </Switch>
   );
