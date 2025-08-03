@@ -137,7 +137,7 @@ export default function MapView() {
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        color: white;
+        color: ${aqiConfig.textColor};
         font-size: 14px;
         box-shadow: 0 4px 20px ${aqiConfig.color}40, 0 0 0 ${city.airQuality.aqi > 150 ? '4px' : '2px'} rgba(255,255,255,0.8);
         ${city.airQuality.aqi > 150 ? 'animation: pulse 2s infinite;' : ''}
