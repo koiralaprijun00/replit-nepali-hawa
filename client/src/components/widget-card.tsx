@@ -13,16 +13,16 @@ interface WidgetCardProps {
 
 export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: WidgetCardProps) {
   const aqiLevel = getAQILevel(city.airQuality?.aqi || 0);
-  
+
   // Convert HSL to RGB for transparency
   const hslToRgb = (hsl: string) => {
     const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
     if (!match) return 'rgb(34, 197, 94)'; // fallback green
-    
+
     const h = parseInt(match[1]) / 360;
     const s = parseInt(match[2]) / 100;
     const l = parseInt(match[3]) / 100;
-    
+
     const hue2rgb = (p: number, q: number, t: number) => {
       if (t < 0) t += 1;
       if (t > 1) t -= 1;
@@ -31,55 +31,79 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
       if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
       return p;
     };
-    
+
     const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
     const p = 2 * l - q;
     const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
     const g = Math.round(hue2rgb(p, q, h) * 255);
     const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
-    
+
     return `rgb(${r}, ${g}, ${b})`;
   };
-  
-  // Use AQI-based background for current location, default for others
+
+  // Calculate optimal text color based on background brightness
+  const getOptimalTextColor = (bgColor: string) => {
+    const rgb = hslToRgb(bgColor).match(/\d+/g);
+    if (!rgb) return '#ffffff';
+
+    const [r, g, b] = rgb.map(Number);
+    // Calculate luminance using standard formula
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+    // Return white for dark backgrounds, dark for light backgrounds
+    return luminance > 0.6 ? '#1f2937' : '#ffffff';
+  };
+
+  const textColor = isCurrentLocation && city.airQuality?.aqi ? getOptimalTextColor(aqiLevel.color) : '#1f2937';
+  const isLightText = textColor === '#ffffff';
+
+  // Use AQI-based background for current location (bold color), default for others
   const cardStyle = isCurrentLocation && city.airQuality?.aqi ? {
-    background: `linear-gradient(135deg, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.4)')}, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.6)')})`,
-    borderColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.8)')
+    background: `linear-gradient(135deg, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.9)')}, ${hslToRgb(aqiLevel.color)})`,
+    borderColor: hslToRgb(aqiLevel.color),
+    color: textColor
   } : {};
-  
+
   return (
     <Card 
-      className={`p-4 ${isCurrentLocation && city.airQuality?.aqi ? 'border-2' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'} shadow-sm`}
+      className={`${isCurrentLocation ? 'p-6' : 'p-4'} ${isCurrentLocation && city.airQuality?.aqi ? 'border-2 shadow-lg' : 'bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm'} transition-all duration-200 hover:shadow-md`}
       style={cardStyle}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center space-x-2">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-3">
           {isCurrentLocation ? (
-            <Navigation className="h-4 w-4 text-blue-500" />
+            <Navigation className="h-5 w-5 text-blue-500" />
           ) : (
             <MapPin className="h-4 w-4 text-gray-500" />
           )}
-          <div>
-            <h3 className="font-semibold text-sm text-gray-900 line-clamp-1">
+          <div className="min-w-0 flex-1">
+            <h3 className={`font-bold ${isCurrentLocation ? 'text-xl' : 'text-sm'} line-clamp-1`} style={{ color: isCurrentLocation ? textColor : '#1f2937' }}>
               {city.name}
             </h3>
-            <p className="text-xs text-gray-500 line-clamp-1">
+            <p className={`${isCurrentLocation ? 'text-base font-medium' : 'text-xs'} line-clamp-1`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.9)' : 'rgba(31,41,55,0.8)') : '#6b7280' }}>
               {isCurrentLocation ? 'Current Location' : city.province}
             </p>
           </div>
         </div>
-        
+
         {city.airQuality?.aqi && (
           <Badge 
-            className={`font-bold rounded-md ${isCurrentLocation ? 'text-lg min-w-[70px] h-10' : 'text-xs min-w-[50px] h-7'}`}
+            className={`font-extrabold rounded-xl flex-shrink-0 flex items-center justify-center ${
+              isCurrentLocation 
+                ? 'text-4xl px-3 py-3 w-20 h-16' 
+                : 'text-lg px-3 py-1 min-w-[60px] h-9'
+            }`}
             style={isCurrentLocation ? { 
-              backgroundColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.08)'),
-              color: aqiLevel.color,
-              border: `1px solid ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.25)')}`
+              backgroundColor: isLightText ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
+              color: textColor,
+              border: `3px solid ${isLightText ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.2)'}`,
+              fontSize: isCurrentLocation ? '2.5rem' : undefined,
+              lineHeight: '1'
             } : { 
               backgroundColor: aqiLevel.color,
-              color: aqiLevel.textColor 
+              color: aqiLevel.textColor,
+              border: 'none'
             }}
           >
             {city.airQuality.aqi}
@@ -89,17 +113,17 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
 
       {/* AQI Status */}
       {city.airQuality && (
-        <div className="mb-3">
-          <div className="flex items-center space-x-2 mb-1">
+        <div className={`${isCurrentLocation ? 'mb-5' : 'mb-4'}`}>
+          <div className="flex items-center space-x-2 mb-2">
             <div 
-              className="w-2 h-2 rounded-full"
+              className={`${isCurrentLocation ? 'w-3 h-3' : 'w-2 h-2'} rounded-full`}
               style={{ backgroundColor: aqiLevel.color }}
             ></div>
-            <span className="text-sm font-medium text-gray-700">
+            <span className={`${isCurrentLocation ? 'text-lg font-bold' : 'text-sm font-medium'}`} style={{ color: isCurrentLocation ? textColor : '#374151' }}>
               {aqiLevel.label}
             </span>
           </div>
-          <p className="text-xs text-gray-600">
+          <p className={`${isCurrentLocation ? 'text-base font-medium' : 'text-xs'}`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.95)' : 'rgba(31,41,55,0.9)') : '#6b7280' }}>
             Air quality is {aqiLevel.label.toLowerCase()}
           </p>
         </div>
@@ -107,22 +131,22 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
 
       {/* Weather Info */}
       {city.weather && (
-        <div className="grid grid-cols-3 gap-2 mb-3">
-          <div className="flex items-center space-x-1">
-            <Thermometer className="h-3 w-3 text-gray-400" />
-            <span className="text-xs text-gray-600">
+        <div className={`grid grid-cols-3 gap-${isCurrentLocation ? '4' : '3'} ${isCurrentLocation ? 'mb-6' : 'mb-4'}`}>
+          <div className="flex items-center space-x-2">
+            <Thermometer className={`${isCurrentLocation ? 'h-4 w-4' : 'h-3 w-3'}`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.8)' : 'rgba(31,41,55,0.6)') : '#9ca3af' }} />
+            <span className={`${isCurrentLocation ? 'text-base font-semibold' : 'text-xs'} font-medium`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.95)' : 'rgba(31,41,55,0.9)') : '#6b7280' }}>
               {city.weather.temperature}°C
             </span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Wind className="h-3 w-3 text-gray-400" />
-            <span className="text-xs text-gray-600">
+          <div className="flex items-center space-x-2">
+            <Wind className={`${isCurrentLocation ? 'h-4 w-4' : 'h-3 w-3'}`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.8)' : 'rgba(31,41,55,0.6)') : '#9ca3af' }} />
+            <span className={`${isCurrentLocation ? 'text-base font-semibold' : 'text-xs'} font-medium`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.95)' : 'rgba(31,41,55,0.9)') : '#6b7280' }}>
               {city.weather.windSpeed} km/h
             </span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Eye className="h-3 w-3 text-gray-400" />
-            <span className="text-xs text-gray-600">
+          <div className="flex items-center space-x-2">
+            <Eye className={`${isCurrentLocation ? 'h-4 w-4' : 'h-3 w-3'}`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.8)' : 'rgba(31,41,55,0.6)') : '#9ca3af' }} />
+            <span className={`${isCurrentLocation ? 'text-base font-semibold' : 'text-xs'} font-medium`} style={{ color: isCurrentLocation ? (isLightText ? 'rgba(255,255,255,0.95)' : 'rgba(31,41,55,0.9)') : '#6b7280' }}>
               {city.weather.humidity}%
             </span>
           </div>
@@ -133,9 +157,18 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
       {onViewDetails && (
         <Button
           variant="outline"
-          size="sm"
+          size={isCurrentLocation ? "default" : "sm"}
           onClick={onViewDetails}
-          className="w-full h-8 text-xs"
+          className={`w-full ${
+            isCurrentLocation 
+              ? 'h-10 text-sm border-2 transition-all duration-200' 
+              : 'h-8 text-xs bg-white hover:bg-gray-50'
+          } transition-all duration-200`}
+          style={isCurrentLocation ? {
+            backgroundColor: isLightText ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+            borderColor: isLightText ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.3)',
+            color: textColor
+          } : {}}
         >
           View Details
         </Button>
@@ -143,7 +176,7 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
 
       {/* Last Updated - Only show for non-current location */}
       {city.airQuality?.timestamp && !isCurrentLocation && (
-        <p className="text-xs text-gray-400 text-center mt-2">
+        <p className="text-xs text-gray-400 text-center mt-3">
           Updated {new Date(city.airQuality.timestamp).toLocaleTimeString([], { 
             hour: '2-digit', 
             minute: '2-digit' 
