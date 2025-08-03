@@ -43,8 +43,8 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
   
   // Use AQI-based background for current location, default for others
   const cardStyle = isCurrentLocation && city.airQuality?.aqi ? {
-    background: `linear-gradient(135deg, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.15)')}, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.25)')})`,
-    borderColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.4)')
+    background: `linear-gradient(135deg, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.4)')}, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.6)')})`,
+    borderColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.8)')
   } : {};
   
   return (
@@ -72,8 +72,12 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
         
         {city.airQuality?.aqi && (
           <Badge 
-            className="text-xs font-bold min-w-[50px] h-7 rounded-md"
-            style={{ 
+            className={`font-bold rounded-md ${isCurrentLocation ? 'text-sm min-w-[60px] h-8' : 'text-xs min-w-[50px] h-7'}`}
+            style={isCurrentLocation ? { 
+              backgroundColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.2)'),
+              color: aqiLevel.color,
+              border: `2px solid ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.3)')}`
+            } : { 
               backgroundColor: aqiLevel.color,
               color: aqiLevel.textColor 
             }}
@@ -137,8 +141,8 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
         </Button>
       )}
 
-      {/* Last Updated */}
-      {city.airQuality?.timestamp && (
+      {/* Last Updated - Only show for non-current location */}
+      {city.airQuality?.timestamp && !isCurrentLocation && (
         <p className="text-xs text-gray-400 text-center mt-2">
           Updated {new Date(city.airQuality.timestamp).toLocaleTimeString([], { 
             hour: '2-digit', 
