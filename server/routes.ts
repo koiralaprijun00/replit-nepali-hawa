@@ -623,13 +623,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
               weather
             };
           } else {
-            // For worldwide locations, we'll need to fetch fresh data from API
-            return {
-              ...favorite,
-              city: null,
-              airQuality: null,
-              weather: null
-            };
+            // For worldwide locations, fetch fresh data from API
+            try {
+              const [airResponse, weatherResponse] = await Promise.all([
+                fetch(`http://api.openweathermap.org/data/2.5/air_pollution?lat=${favorite.latitude}&lon=${favorite.longitude}&appid=${OPENWEATHER_API_KEY}`),
+                fetch(`http://api.openweathermap.org/data/2.5/weather?lat=${favorite.latitude}&lon=${favorite.longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`)
+              ]);
+
+              let airQuality = null;
+              let weather = null;
+
+              if (airResponse.ok && weatherResponse.ok) {
+                const airData = await airResponse.json();
+                const weatherData = await weatherResponse.json();
+
+                // Calculate EPA AQI
+                const pm25 = airData.list[0].components.pm2_5;
+                const aqiValue = calculateEPAAQI(pm25);
+                const mainPollutant = getMainPollutant(airData.list[0].components);
+
+                airQuality = {
+                  cityId: favorite.id,
+                  aqi: aqiValue,
+                  mainPollutant,
+                  timestamp: new Date().toISOString(),
+                  pollutants: {
+                    co: airData.list[0].components.co,
+                    no: airData.list[0].components.no,
+                    no2: airData.list[0].components.no2,
+                    o3: airData.list[0].components.o3,
+                    so2: airData.list[0].components.so2,
+                    pm2_5: pm25,
+                    pm10: airData.list[0].components.pm10,
+                    nh3: airData.list[0].components.nh3,
+                  },
+                };
+
+                weather = {
+                  cityId: favorite.id,
+                  temperature: Math.round(weatherData.main.temp),
+                  feelsLike: Math.round(weatherData.main.feels_like),
+                  humidity: weatherData.main.humidity,
+                  pressure: weatherData.main.pressure,
+                  windSpeed: Math.round(weatherData.wind.speed * 3.6), // Convert m/s to km/h
+                  windDirection: weatherData.wind.deg,
+                  visibility: weatherData.visibility,
+                  icon: weatherData.weather[0].icon,
+                  description: weatherData.weather[0].description,
+                  timestamp: new Date().toISOString(),
+                };
+              }
+
+              return {
+                ...favorite,
+                city: null,
+                airQuality,
+                weather
+              };
+            } catch (error) {
+              console.error('Error fetching data for worldwide location:', error);
+              return {
+                ...favorite,
+                city: null,
+                airQuality: null,
+                weather: null
+              };
+            }
           }
         })
       );

@@ -283,13 +283,15 @@ export default function Favorites() {
                   >
                     <WidgetCard
                       city={mockCity}
-                      onViewDetails={() => handleLocationClick(favorite)}
                     />
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDeleteFavorite(favorite.id, favorite.name)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click
+                      handleDeleteFavorite(favorite.id, favorite.name);
+                    }}
                     className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
                   >
                     <Trash2 className="h-4 w-4" />
