@@ -55,9 +55,12 @@ export const hourlyForecastSchema = z.object({
 
 export const favoriteLocationSchema = z.object({
   id: z.string(),
-  cityId: z.string(),
-  customLabel: z.string(), // "Home", "Work", "Kids School", etc.
-  icon: z.string().optional(), // 📍, 🏢, 🏫, etc.
+  // For Nepal cities, use cityId. For worldwide locations, use coordinates
+  cityId: z.string().optional(), // Reference to Nepal cities table (optional)
+  name: z.string(), // Location name (e.g., "Paris, France" or "Kathmandu")
+  country: z.string().default("Nepal"), // Country name
+  latitude: z.number(),
+  longitude: z.number(),
   isCurrentLocation: z.boolean().default(false),
   order: z.number(), // for sorting
   createdAt: z.string(),

@@ -94,8 +94,10 @@ export default function CityDetail({ params }: CityDetailProps) {
         const order = favorites ? favorites.length : 0;
         await addFavorite.mutateAsync({
           cityId: city.id,
-          customLabel: city.name,
-          icon: '📍',
+          name: city.name,
+          country: "Nepal",
+          latitude: city.city.latitude,
+          longitude: city.city.longitude,
           isCurrentLocation: false,
           order,
           createdAt: new Date().toISOString()

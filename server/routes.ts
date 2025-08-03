@@ -584,16 +584,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get city data and air quality for each favorite
       const favoritesWithData = await Promise.all(
         favorites.map(async (favorite) => {
-          const city = await storage.getCity(favorite.cityId);
-          const airQuality = await storage.getAirQuality(favorite.cityId);
-          const weather = await storage.getWeather(favorite.cityId);
-          
-          return {
-            ...favorite,
-            city,
-            airQuality,
-            weather
-          };
+          // For Nepal cities, get from city storage
+          if (favorite.cityId) {
+            const city = await storage.getCity(favorite.cityId);
+            const airQuality = await storage.getAirQuality(favorite.cityId);
+            const weather = await storage.getWeather(favorite.cityId);
+            
+            return {
+              ...favorite,
+              city,
+              airQuality,
+              weather
+            };
+          } else {
+            // For worldwide locations, we'll need to fetch fresh data from API
+            return {
+              ...favorite,
+              city: null,
+              airQuality: null,
+              weather: null
+            };
+          }
         })
       );
       
@@ -609,16 +620,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const favoriteData = insertFavoriteLocationSchema.parse(req.body);
       
-      // Check if city exists
-      const city = await storage.getCity(favoriteData.cityId);
-      if (!city) {
-        return res.status(404).json({ message: "City not found" });
+      // Check if location already favorited
+      let alreadyFavorited = false;
+      if (favoriteData.cityId) {
+        // Nepal city check
+        alreadyFavorited = await storage.isCityFavorited(favoriteData.cityId);
+      } else {
+        // Worldwide location check
+        alreadyFavorited = await storage.isLocationFavorited(favoriteData.latitude, favoriteData.longitude);
       }
       
-      // Check if already favorited
-      const alreadyFavorited = await storage.isCityFavorited(favoriteData.cityId);
       if (alreadyFavorited) {
-        return res.status(400).json({ message: "City is already in favorites" });
+        return res.status(400).json({ message: "Location is already in favorites" });
       }
       
       const favorite = await storage.createFavoriteLocation(favoriteData);

@@ -1,84 +1,77 @@
 import { useState } from "react";
-import { ArrowLeft, Star, Plus, Edit3, Trash2, MapPin, Building, GraduationCap, Home } from "lucide-react";
+import { ArrowLeft, Star, Plus, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
-import { useFavorites, useAddFavorite, useUpdateFavorite, useDeleteFavorite, useCities } from "@/lib/api";
-import { getAQILevel } from "@/lib/constants";
+import { useFavorites, useAddFavorite, useDeleteFavorite } from "@/lib/api";
+import { WidgetCard } from "@/components/widget-card";
 import type { InsertFavoriteLocation } from "@shared/schema";
-
-const FAVORITE_ICONS = [
-  { value: "📍", label: "Location", icon: MapPin },
-  { value: "🏠", label: "Home", icon: Home },
-  { value: "🏢", label: "Work", icon: Building },
-  { value: "🏫", label: "School", icon: GraduationCap },
-  { value: "🏥", label: "Hospital" },
-  { value: "🏪", label: "Shop" },
-  { value: "🍽️", label: "Restaurant" },
-  { value: "🎯", label: "Other" }
-];
 
 export default function Favorites() {
   const [, setLocation] = useLocation();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [editingFavorite, setEditingFavorite] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const { toast } = useToast();
 
   const { data: favorites, isLoading: favoritesLoading } = useFavorites();
-  const { data: cities } = useCities();
   const addFavorite = useAddFavorite();
-  const updateFavorite = useUpdateFavorite();
   const deleteFavorite = useDeleteFavorite();
-
-  const [newFavorite, setNewFavorite] = useState<Partial<InsertFavoriteLocation>>({
-    cityId: '',
-    customLabel: '',
-    icon: '📍',
-    isCurrentLocation: false,
-    order: 0,
-    createdAt: new Date().toISOString()
-  });
 
   const handleBack = () => {
     setLocation('/');
   };
 
-  const handleAddFavorite = async () => {
-    if (!newFavorite.cityId || !newFavorite.customLabel) {
-      toast({
-        title: "Missing information",
-        description: "Please select a city and enter a label",
-        variant: "destructive"
-      });
+  const searchLocations = async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
       return;
     }
 
+    setIsSearching(true);
+    try {
+      // Use OpenWeather Geocoding API to search worldwide locations
+      const response = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
+      );
+      
+      if (response.ok) {
+        const locations = await response.json();
+        setSearchResults(locations);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleAddLocation = async (location: any) => {
     try {
       const order = favorites ? favorites.length : 0;
-      await addFavorite.mutateAsync({
-        ...newFavorite as InsertFavoriteLocation,
-        order
-      });
+      const locationName = `${location.name}${location.state ? `, ${location.state}` : ''}, ${location.country}`;
       
-      setIsAddDialogOpen(false);
-      setNewFavorite({
-        cityId: '',
-        customLabel: '',
-        icon: '📍',
+      await addFavorite.mutateAsync({
+        name: locationName,
+        country: location.country,
+        latitude: location.lat,
+        longitude: location.lon,
         isCurrentLocation: false,
-        order: 0,
+        order,
         createdAt: new Date().toISOString()
       });
       
+      setIsAddDialogOpen(false);
+      setSearchQuery("");
+      setSearchResults([]);
+      
       toast({
         title: "Added to favorites",
-        description: `${newFavorite.customLabel} has been added to your favorites`
+        description: `${locationName} has been added to your favorites`
       });
     } catch (error) {
       toast({
@@ -89,29 +82,12 @@ export default function Favorites() {
     }
   };
 
-  const handleUpdateFavorite = async (id: string, updates: Partial<InsertFavoriteLocation>) => {
-    try {
-      await updateFavorite.mutateAsync({ id, updates });
-      setEditingFavorite(null);
-      toast({
-        title: "Updated",
-        description: "Favorite location has been updated"
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update favorite location",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleDeleteFavorite = async (id: string, label: string) => {
+  const handleDeleteFavorite = async (id: string, name: string) => {
     try {
       await deleteFavorite.mutateAsync(id);
       toast({
         title: "Removed",
-        description: `${label} has been removed from favorites`
+        description: `${name} has been removed from favorites`
       });
     } catch (error) {
       toast({
@@ -122,8 +98,14 @@ export default function Favorites() {
     }
   };
 
-  const handleCityClick = (cityId: string) => {
-    setLocation(`/city/${cityId}`);
+  const handleLocationClick = (favorite: any) => {
+    if (favorite.cityId) {
+      // Nepal city - use city detail page
+      setLocation(`/city/${favorite.cityId}`);
+    } else {
+      // Worldwide location - use coordinates
+      setLocation(`/city/current-location?lat=${favorite.latitude}&lon=${favorite.longitude}`);
+    }
   };
 
   if (favoritesLoading) {
@@ -139,10 +121,9 @@ export default function Favorites() {
         </div>
         <div className="p-4 space-y-4">
           {Array.from({ length: 3 }).map((_, index) => (
-            <Card key={index} className="p-4 animate-pulse">
-              <div className="h-6 bg-gray-200 rounded mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-            </Card>
+            <div key={index} className="animate-pulse">
+              <div className="bg-gray-200 rounded-lg h-32"></div>
+            </div>
           ))}
         </div>
       </div>
@@ -170,76 +151,66 @@ export default function Favorites() {
             </DialogTrigger>
             <DialogContent className="max-w-sm">
               <DialogHeader>
-                <DialogTitle>Add Favorite Location</DialogTitle>
+                <DialogTitle>Add Location</DialogTitle>
               </DialogHeader>
               
               <div className="space-y-4 py-4">
                 <div>
-                  <Label htmlFor="city">City</Label>
-                  <Select 
-                    value={newFavorite.cityId} 
-                    onValueChange={(value) => setNewFavorite(prev => ({ ...prev, cityId: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a city" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cities?.map((city) => (
-                        <SelectItem key={city.id} value={city.id}>
-                          {city.name}, {city.province}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label htmlFor="search">Search worldwide locations</Label>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="search"
+                      placeholder="e.g., Paris, New York, Tokyo..."
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        searchLocations(e.target.value);
+                      }}
+                      className="pl-10"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="label">Custom Label</Label>
-                  <Input
-                    id="label"
-                    placeholder="e.g., Home, Work, Kids School"
-                    value={newFavorite.customLabel}
-                    onChange={(e) => setNewFavorite(prev => ({ ...prev, customLabel: e.target.value }))}
-                  />
-                </div>
+                {isSearching && (
+                  <div className="text-center text-sm text-gray-500">
+                    Searching...
+                  </div>
+                )}
                 
-                <div>
-                  <Label htmlFor="icon">Icon</Label>
-                  <Select 
-                    value={newFavorite.icon} 
-                    onValueChange={(value) => setNewFavorite(prev => ({ ...prev, icon: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {FAVORITE_ICONS.map((icon) => (
-                        <SelectItem key={icon.value} value={icon.value}>
-                          <span className="flex items-center space-x-2">
-                            <span>{icon.value}</span>
-                            <span>{icon.label}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {searchResults.length > 0 && (
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {searchResults.map((location, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="w-full justify-start text-left h-auto p-3"
+                        onClick={() => handleAddLocation(location)}
+                        disabled={addFavorite.isPending}
+                      >
+                        <div>
+                          <div className="font-medium">
+                            {location.name}
+                            {location.state && `, ${location.state}`}
+                          </div>
+                          <div className="text-sm text-gray-500">{location.country}</div>
+                        </div>
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </div>
               
-              <div className="flex space-x-2">
+              <div className="flex justify-end">
                 <Button 
                   variant="outline" 
-                  onClick={() => setIsAddDialogOpen(false)}
-                  className="flex-1"
+                  onClick={() => {
+                    setIsAddDialogOpen(false);
+                    setSearchQuery("");
+                    setSearchResults([]);
+                  }}
                 >
                   Cancel
-                </Button>
-                <Button 
-                  onClick={handleAddFavorite}
-                  disabled={addFavorite.isPending}
-                  className="flex-1"
-                >
-                  {addFavorite.isPending ? "Adding..." : "Add"}
                 </Button>
               </div>
             </DialogContent>
@@ -253,7 +224,7 @@ export default function Favorites() {
           <div className="text-center py-12">
             <Star className="h-12 w-12 mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-700 mb-2">No favorite places yet</h3>
-            <p className="text-gray-500 mb-6">Add your frequently visited locations for quick access</p>
+            <p className="text-gray-500 mb-6">Add locations from anywhere in the world for quick access</p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Your First Location
@@ -263,82 +234,42 @@ export default function Favorites() {
           <>
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-gray-600">
-                {favorites.length}/5 favorite locations
+                {favorites.length} favorite location{favorites.length !== 1 ? 's' : ''}
               </p>
             </div>
             
             {favorites.map((favorite) => {
-              const aqiLevel = favorite.airQuality?.aqi || 0;
-              const aqiConfig = getAQILevel(aqiLevel);
-              
+              // Create a mock city object for WidgetCard
+              const mockCity = {
+                id: favorite.id,
+                name: favorite.name,
+                province: favorite.country,
+                latitude: favorite.latitude,
+                longitude: favorite.longitude,
+                airQuality: favorite.airQuality || null,
+                weather: favorite.weather || null
+              };
+
               return (
-                <Card key={favorite.id} className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div 
-                      className="flex items-start space-x-3 flex-1 cursor-pointer"
-                      onClick={() => handleCityClick(favorite.cityId)}
-                    >
-                      <span className="text-lg">{favorite.icon}</span>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h3 className="font-medium text-gray-900">
-                            {favorite.customLabel}
-                          </h3>
-                          {favorite.isCurrentLocation && (
-                            <Badge variant="outline" className="text-xs">
-                              Current
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {favorite.city?.name}, {favorite.city?.province}
-                        </p>
-                        
-                        {favorite.airQuality && (
-                          <div className="flex items-center space-x-3">
-                            <Badge 
-                              style={{ 
-                                backgroundColor: `${aqiConfig.color}20`,
-                                color: aqiConfig.textColor,
-                                borderColor: aqiConfig.color 
-                              }}
-                              className="border"
-                            >
-                              AQI {favorite.airQuality.aqi}
-                            </Badge>
-                            <span className="text-sm text-gray-600">
-                              {aqiConfig.label}
-                            </span>
-                            {favorite.weather && (
-                              <span className="text-sm text-gray-600">
-                                {favorite.weather.temperature}°C
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-1 ml-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setEditingFavorite(favorite.id)}
-                        className="h-8 w-8"
-                      >
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteFavorite(favorite.id, favorite.customLabel)}
-                        className="h-8 w-8 text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                <div key={favorite.id} className="relative">
+                  <div 
+                    className="cursor-pointer hover:shadow-md transition-shadow"
+                    onClick={() => handleLocationClick(favorite)}
+                  >
+                    <WidgetCard
+                      city={mockCity}
+                      onViewDetails={() => handleLocationClick(favorite)}
+                    />
                   </div>
-                </Card>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeleteFavorite(favorite.id, favorite.name)}
+                    className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               );
             })}
           </>

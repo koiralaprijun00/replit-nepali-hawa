@@ -229,6 +229,12 @@ export class MemStorage implements IStorage {
   async isCityFavorited(cityId: string): Promise<boolean> {
     return Array.from(this.favoriteLocations.values()).some(fav => fav.cityId === cityId);
   }
+
+  async isLocationFavorited(latitude: number, longitude: number): Promise<boolean> {
+    return Array.from(this.favoriteLocations.values()).some(fav => 
+      Math.abs(fav.latitude - latitude) < 0.001 && Math.abs(fav.longitude - longitude) < 0.001
+    );
+  }
 }
 
 export const storage = new MemStorage();
