@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Navigation, MapPin, Thermometer, Wind, Eye } from "lucide-react";
+import { Thermometer, Wind, Eye } from "lucide-react";
 import { getAQILevel } from "@/lib/constants";
 import type { CityWithData } from "@/lib/api";
 
@@ -160,14 +160,14 @@ export function WidgetCard({
         </div>
       )}
 
-      {/* Weather Info */}
+      {/* Weather Info - With justify-between */}
       {city.weather && (
         <div
-          className={`grid grid-cols-3 gap-${isCurrentLocation ? "4" : "3"} ${isCurrentLocation ? "mb-6" : "mb-4"}`}
+          className={`flex justify-between items-center ${isCurrentLocation ? "mb-6" : "mb-4"}`}
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
             <Thermometer
-              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"}`}
+              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"} flex-shrink-0`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
@@ -177,7 +177,7 @@ export function WidgetCard({
               }}
             />
             <span
-              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium`}
+              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium whitespace-nowrap`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
@@ -189,9 +189,9 @@ export function WidgetCard({
               {city.weather.temperature}°C
             </span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
             <Wind
-              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"}`}
+              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"} flex-shrink-0`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
@@ -201,7 +201,7 @@ export function WidgetCard({
               }}
             />
             <span
-              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium`}
+              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium whitespace-nowrap`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
@@ -213,9 +213,9 @@ export function WidgetCard({
               {city.weather.windSpeed} km/h
             </span>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1.5">
             <Eye
-              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"}`}
+              className={`${isCurrentLocation ? "h-4 w-4" : "h-3 w-3"} flex-shrink-0`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
@@ -225,7 +225,7 @@ export function WidgetCard({
               }}
             />
             <span
-              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium`}
+              className={`${isCurrentLocation ? "text-base font-semibold" : "text-xs"} font-medium whitespace-nowrap`}
               style={{
                 color: isCurrentLocation
                   ? isLightText
