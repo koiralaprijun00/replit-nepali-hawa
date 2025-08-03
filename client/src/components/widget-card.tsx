@@ -14,10 +14,37 @@ interface WidgetCardProps {
 export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: WidgetCardProps) {
   const aqiLevel = getAQILevel(city.airQuality?.aqi || 0);
   
+  // Convert HSL to RGB for transparency
+  const hslToRgb = (hsl: string) => {
+    const match = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+    if (!match) return 'rgb(34, 197, 94)'; // fallback green
+    
+    const h = parseInt(match[1]) / 360;
+    const s = parseInt(match[2]) / 100;
+    const l = parseInt(match[3]) / 100;
+    
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1/6) return p + (q - p) * 6 * t;
+      if (t < 1/2) return q;
+      if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+      return p;
+    };
+    
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const r = Math.round(hue2rgb(p, q, h + 1/3) * 255);
+    const g = Math.round(hue2rgb(p, q, h) * 255);
+    const b = Math.round(hue2rgb(p, q, h - 1/3) * 255);
+    
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+  
   // Use AQI-based background for current location, default for others
   const cardStyle = isCurrentLocation && city.airQuality?.aqi ? {
-    background: `linear-gradient(135deg, ${aqiLevel.color}15, ${aqiLevel.color}25)`,
-    borderColor: `${aqiLevel.color}40`
+    background: `linear-gradient(135deg, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.15)')}, ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.25)')})`,
+    borderColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.4)')
   } : {};
   
   return (
