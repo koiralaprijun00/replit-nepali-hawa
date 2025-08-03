@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Star, Plus, Trash2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -26,29 +26,51 @@ export default function Favorites() {
     setLocation('/');
   };
 
-  const searchLocations = async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      // Use OpenWeather Geocoding API to search worldwide locations
-      const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(query)}&limit=5&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}`
-      );
-      
-      if (response.ok) {
-        const locations = await response.json();
-        setSearchResults(locations);
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        setIsSearching(false);
+        return;
       }
-    } catch (error) {
-      console.error('Search error:', error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
+
+      setIsSearching(true);
+      try {
+        // Use the server endpoint instead of direct API call to avoid CORS issues
+        const apiKey = "dummy"; // We'll use server-side API call instead
+
+        // Use our server endpoint for location search
+        const response = await fetch(
+          `/api/search-locations?q=${encodeURIComponent(query)}`
+        );
+        
+        if (response.ok) {
+          const locations = await response.json();
+          console.log('Search results:', locations);
+          setSearchResults(locations);
+        } else {
+          console.error('Search failed:', response.status, response.statusText);
+          setSearchResults([]);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500),
+    []
+  );
+
+  // Debounce utility function
+  function debounce<T extends (...args: any[]) => any>(func: T, wait: number): T {
+    let timeout: NodeJS.Timeout;
+    return ((...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    }) as T;
+  }
 
   const handleAddLocation = async (location: any) => {
     try {
@@ -164,8 +186,9 @@ export default function Favorites() {
                       placeholder="e.g., Paris, New York, Tokyo..."
                       value={searchQuery}
                       onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        searchLocations(e.target.value);
+                        const query = e.target.value;
+                        setSearchQuery(query);
+                        debouncedSearch(query);
                       }}
                       className="pl-10"
                     />
@@ -246,6 +269,8 @@ export default function Favorites() {
                 province: favorite.country,
                 latitude: favorite.latitude,
                 longitude: favorite.longitude,
+                lat: favorite.latitude,    // Add lat property
+                lon: favorite.longitude,   // Add lon property
                 airQuality: favorite.airQuality || null,
                 weather: favorite.weather || null
               };

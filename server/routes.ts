@@ -575,6 +575,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Location search API
+  app.get("/api/search-locations", async (req, res) => {
+    try {
+      const { q } = req.query;
+      
+      if (!q || typeof q !== 'string') {
+        return res.status(400).json({ message: "Query parameter 'q' is required" });
+      }
+
+      // Use OpenWeather Geocoding API to search worldwide locations
+      const response = await fetch(
+        `http://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=5&appid=${OPENWEATHER_API_KEY}`
+      );
+      
+      if (!response.ok) {
+        return res.status(500).json({ message: "Failed to search locations" });
+      }
+
+      const locations = await response.json();
+      res.json(locations);
+    } catch (error) {
+      console.error('Error searching locations:', error);
+      res.status(500).json({ message: "Failed to search locations" });
+    }
+  });
+
   // Favorite Locations API
   // Get all favorite locations
   app.get("/api/favorites", async (req, res) => {
