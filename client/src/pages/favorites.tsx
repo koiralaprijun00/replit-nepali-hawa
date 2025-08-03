@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useFavorites, useAddFavorite, useDeleteFavorite } from "@/lib/api";
-import { WidgetCard } from "@/components/widget-card";
+import { CityCard } from "@/components/city-card";
 import type { InsertFavoriteLocation } from "@shared/schema";
 
 export default function Favorites() {
@@ -262,7 +262,7 @@ export default function Favorites() {
             </div>
             
             {favorites.map((favorite) => {
-              // Create a mock city object for WidgetCard
+              // Create a mock city object for CityCard
               const mockCity = {
                 id: favorite.id,
                 name: favorite.name,
@@ -277,14 +277,10 @@ export default function Favorites() {
 
               return (
                 <div key={favorite.id} className="relative">
-                  <div 
-                    className="cursor-pointer hover:shadow-md transition-shadow"
-                    onClick={() => handleLocationClick(favorite)}
-                  >
-                    <WidgetCard
-                      city={mockCity}
-                    />
-                  </div>
+                  <CityCard
+                    city={mockCity}
+                    onCityClick={() => handleLocationClick(favorite)}
+                  />
                   <Button
                     variant="ghost"
                     size="icon"
@@ -292,7 +288,7 @@ export default function Favorites() {
                       e.stopPropagation(); // Prevent card click
                       handleDeleteFavorite(favorite.id, favorite.name);
                     }}
-                    className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50"
+                    className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 z-10"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
