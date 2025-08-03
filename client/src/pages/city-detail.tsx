@@ -13,7 +13,13 @@ interface CityDetailProps {
 
 export default function CityDetail({ params }: CityDetailProps) {
   const [, setLocation] = useLocation();
-  const { data: city, isLoading, error } = useCity(params.id);
+  
+  // Extract lat/lon from URL params for current location
+  const urlParams = new URLSearchParams(window.location.search);
+  const lat = urlParams.get('lat') ? parseFloat(urlParams.get('lat')!) : undefined;
+  const lon = urlParams.get('lon') ? parseFloat(urlParams.get('lon')!) : undefined;
+  
+  const { data: city, isLoading, error } = useCity(params.id, lat, lon);
   const refreshCity = useRefreshCity();
   const { toast } = useToast();
 

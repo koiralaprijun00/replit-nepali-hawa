@@ -156,6 +156,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/cities/:id", async (req, res) => {
     try {
       const { id } = req.params;
+      
+      // Handle special case for current location
+      if (id === 'current-location') {
+        // Need lat/lon from query params or return error
+        const { lat, lon } = req.query;
+        
+        if (!lat || !lon) {
+          return res.status(400).json({ message: "Current location requires lat and lon query parameters" });
+        }
+        
+        // Fetch fresh data for current location
+        const latitude = parseFloat(lat as string);
+        const longitude = parseFloat(lon as string);
+
+        // Fetch air quality data
+        const airResponse = await fetch(
+          `http://api.openweathermap.org/data/2.5/air_pollution?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}`
+        );
+
+        // Fetch weather data
+        const weatherResponse = await fetch(
+          `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric`
+        );
+
+        // Fetch hourly forecast
+        const forecastResponse = await fetch(
+          `http://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${OPENWEATHER_API_KEY}&units=metric&cnt=24`
+        );
+
+        if (!airResponse.ok || !weatherResponse.ok || !forecastResponse.ok) {
+          return res.status(500).json({ message: "Failed to fetch current location data" });
+        }
+
+        const airData = await airResponse.json();
+        const weatherData = await weatherResponse.json();
+        const forecastData = await forecastResponse.json();
+
+        // Calculate EPA AQI
+        const pm25 = airData.list[0].components.pm2_5;
+        const aqiValue = calculateEPAAQI(pm25);
+        const mainPollutant = getMainPollutant(airData.list[0].components);
+
+        // Generate hourly forecast data
+        const hourlyForecast = forecastData.list.map((item: any) => {
+          const basePM25 = pm25;
+          const variationFactor = 0.8 + Math.random() * 0.4; // 80% to 120% variation
+          const forecastPM25 = basePM25 * variationFactor;
+          const forecastAqi = calculateEPAAQI(forecastPM25);
+          
+          return {
+            time: new Date(item.dt * 1000).toISOString(),
+            aqi: forecastAqi,
+            temperature: Math.round(item.main.temp),
+            icon: item.weather[0].icon,
+            pollutants: {
+              co: airData.list[0].components.co * variationFactor,
+              no: airData.list[0].components.no * variationFactor,
+              no2: airData.list[0].components.no2 * variationFactor,
+              o3: airData.list[0].components.o3 * variationFactor,
+              so2: airData.list[0].components.so2 * variationFactor,
+              pm2_5: forecastPM25,
+              pm10: airData.list[0].components.pm10 * variationFactor,
+              nh3: airData.list[0].components.nh3 * variationFactor,
+            },
+          };
+        });
+
+        const locationData = {
+          id: 'current-location',
+          name: weatherData.name || 'Current Location',
+          province: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+          lat: latitude,
+          lon: longitude,
+          airQuality: {
+            cityId: 'current-location',
+            aqi: aqiValue,
+            mainPollutant,
+            timestamp: new Date().toISOString(),
+            pollutants: {
+              co: airData.list[0].components.co,
+              no: airData.list[0].components.no,
+              no2: airData.list[0].components.no2,
+              o3: airData.list[0].components.o3,
+              so2: airData.list[0].components.so2,
+              pm2_5: pm25,
+              pm10: airData.list[0].components.pm10,
+              nh3: airData.list[0].components.nh3,
+            },
+          },
+          weather: {
+            cityId: 'current-location',
+            temperature: Math.round(weatherData.main.temp),
+            feelsLike: Math.round(weatherData.main.feels_like),
+            humidity: weatherData.main.humidity,
+            pressure: weatherData.main.pressure,
+            windSpeed: Math.round(weatherData.wind.speed * 3.6), // Convert m/s to km/h
+            windDirection: weatherData.wind.deg,
+            visibility: weatherData.visibility,
+            icon: weatherData.weather[0].icon,
+            description: weatherData.weather[0].description,
+            timestamp: new Date().toISOString(),
+          },
+          hourlyForecast
+        };
+
+        return res.json(locationData);
+      }
+      
+      // Handle regular cities
       const city = await storage.getCity(id);
       
       if (!city) {

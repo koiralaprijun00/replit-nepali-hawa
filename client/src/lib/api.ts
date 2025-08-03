@@ -20,9 +20,20 @@ export function useCities() {
   });
 }
 
-export function useCity(id: string) {
+export function useCity(id: string, lat?: number, lon?: number) {
   return useQuery<CityDetail>({
-    queryKey: ['/api/cities', id],
+    queryKey: ['/api/cities', id, lat, lon],
+    queryFn: async () => {
+      let url = `/api/cities/${id}`;
+      if (id === 'current-location' && lat && lon) {
+        url += `?lat=${lat}&lon=${lon}`;
+      }
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error('Failed to fetch city data');
+      }
+      return response.json();
+    },
     enabled: !!id,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });

@@ -89,7 +89,11 @@ export default function Home() {
   }, []);
 
   const handleCityClick = (cityId: string) => {
-    setLocation(`/city/${cityId}`);
+    if (cityId === 'current-location' && currentLocation) {
+      setLocation(`/city/${cityId}?lat=${currentLocation.lat}&lon=${currentLocation.lon}`);
+    } else {
+      setLocation(`/city/${cityId}`);
+    }
   };
 
   if (error) {
