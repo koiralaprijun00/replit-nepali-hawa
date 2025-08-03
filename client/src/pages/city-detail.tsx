@@ -136,15 +136,19 @@ export default function CityDetail({ params }: CityDetailProps) {
     <div className="max-w-sm mx-auto bg-white min-h-screen">
       {/* Header */}
       <div 
-        className="px-4 py-6 text-white"
-        style={{ backgroundColor: aqiConfig.color }}
+        className="px-4 py-6"
+        style={{ 
+          backgroundColor: aqiConfig.color,
+          color: aqiConfig.textColor
+        }}
       >
         <div className="flex items-center justify-between mb-4">
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={handleBack}
-            className="rounded-full hover:bg-white/20 text-white"
+            className="rounded-full hover:bg-white/20"
+            style={{ color: aqiConfig.textColor }}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -155,7 +159,8 @@ export default function CityDetail({ params }: CityDetailProps) {
               size="icon"
               onClick={handleRefresh}
               disabled={refreshCity.isPending}
-              className="rounded-full hover:bg-white/20 text-white"
+              className="rounded-full hover:bg-white/20"
+              style={{ color: aqiConfig.textColor }}
             >
               <RotateCcw className={`h-5 w-5 ${refreshCity.isPending ? 'animate-spin' : ''}`} />
             </Button>
@@ -163,7 +168,8 @@ export default function CityDetail({ params }: CityDetailProps) {
               variant="ghost" 
               size="icon" 
               onClick={handleShare}
-              className="rounded-full hover:bg-white/20 text-white"
+              className="rounded-full hover:bg-white/20"
+              style={{ color: aqiConfig.textColor }}
             >
               <Share2 className="h-5 w-5" />
             </Button>
@@ -173,7 +179,9 @@ export default function CityDetail({ params }: CityDetailProps) {
         <div className="text-center mb-6">
           <div className="text-6xl font-bold mb-2">{city.airQuality?.aqi || 0}</div>
           <div className="text-xl font-medium mb-1">{aqiConfig.label}</div>
-          <div className="text-white/80">
+          <div style={{ 
+            color: aqiConfig.textColor === 'white' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)' 
+          }}>
             Main pollutant: {city.airQuality?.mainPollutant} 
             {city.airQuality?.pollutants?.[city.airQuality.mainPollutant.toLowerCase().replace('.', '_') as keyof typeof city.airQuality.pollutants] && 
               ` (${Math.round(city.airQuality.pollutants[city.airQuality.mainPollutant.toLowerCase().replace('.', '_') as keyof typeof city.airQuality.pollutants] * 10) / 10} μg/m³)`
@@ -187,7 +195,14 @@ export default function CityDetail({ params }: CityDetailProps) {
               <span className="text-2xl">{getWeatherIcon()}</span>
               <div>
                 <div className="text-2xl font-bold">{city.weather.temperature}°C</div>
-                <div className="text-sm text-white/80 capitalize">{city.weather.description}</div>
+                <div 
+                  className="text-sm capitalize"
+                  style={{ 
+                    color: aqiConfig.textColor === 'white' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.7)' 
+                  }}
+                >
+                  {city.weather.description}
+                </div>
               </div>
             </div>
             <div className="text-right text-sm">
