@@ -106,32 +106,42 @@ export function WidgetCard({
         </div>
 
         {city.airQuality?.aqi && (
-          <Badge
-            className={`font-extrabold rounded-xl flex-shrink-0 flex items-center justify-center ${
-              isCurrentLocation
-                ? "text-4xl px-3 py-3 w-20 h-16"
-                : "text-lg px-3 py-1 min-w-[60px] h-9"
-            }`}
-            style={
-              isCurrentLocation
-                ? {
-                    backgroundColor: isLightText
-                      ? "rgba(255,255,255,0.25)"
-                      : "rgba(0,0,0,0.25)",
-                    color: textColor,
-                    border: `3px solid ${isLightText ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.2)"}`,
-                    fontSize: isCurrentLocation ? "2.5rem" : undefined,
-                    lineHeight: "1",
-                  }
-                : {
-                    backgroundColor: aqiLevel.color,
-                    color: aqiLevel.textColor,
-                    border: "none",
-                  }
-            }
-          >
-            {city.airQuality.aqi}
-          </Badge>
+          <div className="flex flex-col items-center flex-shrink-0">
+            <Badge
+              className={`font-extrabold rounded-xl flex items-center justify-center ${
+                isCurrentLocation
+                  ? "text-4xl px-3 py-3 w-20 h-16"
+                  : "text-lg px-3 py-1 min-w-[60px] h-9"
+              }`}
+              style={
+                isCurrentLocation
+                  ? {
+                      backgroundColor: isLightText
+                        ? "rgba(255,255,255,0.25)"
+                        : "rgba(0,0,0,0.25)",
+                      color: textColor,
+                      border: `3px solid ${isLightText ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.2)"}`,
+                      fontSize: isCurrentLocation ? "2.5rem" : undefined,
+                      lineHeight: "1",
+                    }
+                  : {
+                      backgroundColor: aqiLevel.color,
+                      color: aqiLevel.textColor,
+                      border: "none",
+                    }
+              }
+            >
+              {city.airQuality.aqi}
+            </Badge>
+            {isCurrentLocation && (
+              <span 
+                className="text-xs font-semibold mt-1"
+                style={{ color: textColor }}
+              >
+                AQI
+              </span>
+            )}
+          </div>
         )}
       </div>
 
@@ -146,18 +156,14 @@ export function WidgetCard({
               {aqiLevel.label}
             </span>
           </div>
-          <p
-            className={`${isCurrentLocation ? "text-base font-medium" : "text-xs"}`}
-            style={{
-              color: isCurrentLocation
-                ? isLightText
-                  ? "rgba(255,255,255,0.95)"
-                  : "rgba(31,41,55,0.9)"
-                : "#6b7280",
-            }}
-          >
-            Air quality is {aqiLevel.label.toLowerCase()}
-          </p>
+          {!isCurrentLocation && (
+            <p
+              className="text-xs"
+              style={{ color: "#6b7280" }}
+            >
+              Air quality is {aqiLevel.label.toLowerCase()}
+            </p>
+          )}
         </div>
       )}
 
