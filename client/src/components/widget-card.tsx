@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Thermometer, Wind, Eye } from "lucide-react";
-import { getAQILevel } from "@/lib/constants";
+import { getAQILevel, getActivityAlert } from "@/lib/constants";
 import type { CityWithData } from "@/lib/api";
 
 interface WidgetCardProps {
@@ -17,6 +17,7 @@ export function WidgetCard({
   onViewDetails,
 }: WidgetCardProps) {
   const aqiLevel = getAQILevel(city.airQuality?.aqi || 0);
+  const activityAlert = getActivityAlert(city.airQuality?.aqi || 0);
 
   // Convert HSL to RGB for transparency
   const hslToRgb = (hsl: string) => {
@@ -237,6 +238,39 @@ export function WidgetCard({
               {city.weather.humidity}%
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Activity Alert - Only for current location with AQI data */}
+      {isCurrentLocation && city.airQuality?.aqi && (
+        <div 
+          className="p-3 rounded-lg mt-4"
+          style={{
+            backgroundColor: isLightText 
+              ? "rgba(255,255,255,0.15)" 
+              : "rgba(0,0,0,0.15)",
+            border: `1px solid ${isLightText ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}`
+          }}
+        >
+          <div className="flex items-center space-x-2 mb-1">
+            <span className="text-lg">{activityAlert.icon}</span>
+            <span 
+              className="font-semibold text-sm"
+              style={{ color: textColor }}
+            >
+              {activityAlert.message}
+            </span>
+          </div>
+          <p 
+            className="text-xs leading-relaxed"
+            style={{ 
+              color: isLightText 
+                ? "rgba(255,255,255,0.85)" 
+                : "rgba(31,41,55,0.8)" 
+            }}
+          >
+            {activityAlert.details}
+          </p>
         </div>
       )}
 

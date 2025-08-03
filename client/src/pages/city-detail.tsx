@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCity, useRefreshCity, useFavoriteStatus, useAddFavorite, useDeleteFavorite, useFavorites } from "@/lib/api";
 import { useLocation } from "wouter";
-import { getAQILevel, getHealthRecommendations, WEATHER_ICONS } from "@/lib/constants";
+import { getAQILevel, getHealthRecommendations, getActivityAlert, WEATHER_ICONS } from "@/lib/constants";
 import { useToast } from "@/hooks/use-toast";
 
 interface CityDetailProps {
@@ -168,6 +168,7 @@ export default function CityDetail({ params }: CityDetailProps) {
   const aqiLevel = city.airQuality?.aqi || 0;
   const aqiConfig = getAQILevel(aqiLevel);
   const healthRecommendations = getHealthRecommendations(aqiLevel);
+  const activityAlert = getActivityAlert(aqiLevel);
 
   const getWeatherIcon = () => {
     if (!city.weather?.icon) return '☁️';
@@ -183,9 +184,25 @@ export default function CityDetail({ params }: CityDetailProps) {
   };
 
   const getHealthColor = () => {
-    if (aqiLevel <= 2) return 'bg-green-50 border-green-200 text-green-800';
-    if (aqiLevel === 3) return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+    if (aqiLevel <= 50) return 'bg-green-50 border-green-200 text-green-800';
+    if (aqiLevel <= 100) return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+    if (aqiLevel <= 150) return 'bg-orange-50 border-orange-200 text-orange-800';
     return 'bg-red-50 border-red-200 text-red-800';
+  };
+
+  const getActivityAlertColor = () => {
+    switch (activityAlert.type) {
+      case 'positive':
+        return 'bg-green-50 border-green-200';
+      case 'neutral':
+        return 'bg-blue-50 border-blue-200';
+      case 'warning':
+        return 'bg-orange-50 border-orange-200';
+      case 'danger':
+        return 'bg-red-50 border-red-200';
+      default:
+        return 'bg-gray-50 border-gray-200';
+    }
   };
 
   return (
@@ -286,6 +303,19 @@ export default function CityDetail({ params }: CityDetailProps) {
       {/* Content */}
       <div className="p-4 space-y-6 pb-20">
         
+        {/* Activity Alert */}
+        <Card className={`p-4 ${getActivityAlertColor()}`}>
+          <div className="flex items-center space-x-3 mb-2">
+            <span className="text-2xl">{activityAlert.icon}</span>
+            <h3 className="text-lg font-semibold text-gray-900">
+              {activityAlert.message}
+            </h3>
+          </div>
+          <p className="text-sm text-gray-700">
+            {activityAlert.details}
+          </p>
+        </Card>
+
         {/* Health Recommendations */}
         <Card className={`p-4 ${getHealthColor()}`}>
           <h3 className="text-lg font-semibold mb-2 flex items-center">

@@ -63,6 +63,56 @@ export function getHealthRecommendations(aqi: number) {
   return HEALTH_RECOMMENDATIONS.HAZARDOUS;
 }
 
+// Activity-based alerts for different AQI levels
+export const ACTIVITY_ALERTS = {
+  GOOD: {
+    message: "Perfect for outdoor activities!",
+    details: "Great conditions for jogging, cycling, and sports",
+    icon: "🏃‍♂️",
+    type: "positive" as const
+  },
+  MODERATE: {
+    message: "Good for most outdoor activities",
+    details: "Sensitive individuals should monitor symptoms during exercise",
+    icon: "🚶‍♂️",
+    type: "neutral" as const
+  },
+  UNHEALTHY_SENSITIVE: {
+    message: "Limited outdoor exercise recommended",
+    details: "Sensitive groups should avoid prolonged outdoor activities",
+    icon: "⚠️",
+    type: "warning" as const
+  },
+  UNHEALTHY: {
+    message: "Avoid outdoor exercise",
+    details: "Air quality is unhealthy for outdoor activities",
+    icon: "🚫",
+    type: "danger" as const
+  },
+  VERY_UNHEALTHY: {
+    message: "Stay indoors",
+    details: "All outdoor activities should be avoided",
+    icon: "🏠",
+    type: "danger" as const
+  },
+  HAZARDOUS: {
+    message: "Remain indoors",
+    details: "Emergency conditions - avoid all outdoor exposure",
+    icon: "☢️",
+    type: "danger" as const
+  }
+} as const;
+
+export function getActivityAlert(aqi: number) {
+  const level = getAQILevel(aqi);
+  if (level === AQI_LEVELS.GOOD) return ACTIVITY_ALERTS.GOOD;
+  if (level === AQI_LEVELS.MODERATE) return ACTIVITY_ALERTS.MODERATE;
+  if (level === AQI_LEVELS.UNHEALTHY_SENSITIVE) return ACTIVITY_ALERTS.UNHEALTHY_SENSITIVE;
+  if (level === AQI_LEVELS.UNHEALTHY) return ACTIVITY_ALERTS.UNHEALTHY;
+  if (level === AQI_LEVELS.VERY_UNHEALTHY) return ACTIVITY_ALERTS.VERY_UNHEALTHY;
+  return ACTIVITY_ALERTS.HAZARDOUS;
+}
+
 export const NEPAL_CITIES = [
   'Kathmandu',
   'Pokhara', 
