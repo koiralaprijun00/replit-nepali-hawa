@@ -116,13 +116,6 @@ export default function Home() {
       <Header />
       <InstallPrompt />
 
-      {/* Header Section */}
-      <div className="bg-white px-4 py-2 border-b border-gray-100">
-        <div className="flex justify-center items-center">
-          <h2 className="text-lg font-semibold text-gray-900">Air Quality</h2>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="pb-20">
         {/* Current Location Section */}

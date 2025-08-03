@@ -29,14 +29,13 @@ export function Header() {
     <div className="bg-white px-4 py-3 border-b border-gray-100 sticky top-0 z-10">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="text-blue-500 text-xl">🌬️</div>
-          <h1 className="text-lg font-bold text-gray-900">Nepal Air</h1>
+          <h1 className="text-lg font-bold text-gray-900">Nepali Hawa</h1>
         </div>
         <div className="flex items-center space-x-1">
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setLocation('/favorites')}
+            onClick={() => setLocation("/favorites")}
             className="rounded-full hover:bg-gray-100"
             title="My Favorite Places"
           >
@@ -50,7 +49,9 @@ export function Header() {
             className="rounded-full hover:bg-gray-100"
             title="Refresh All Data"
           >
-            <RotateCcw className={`h-5 w-5 text-gray-600 ${refreshAll.isPending ? 'animate-spin' : ''}`} />
+            <RotateCcw
+              className={`h-5 w-5 text-gray-600 ${refreshAll.isPending ? "animate-spin" : ""}`}
+            />
           </Button>
         </div>
       </div>
