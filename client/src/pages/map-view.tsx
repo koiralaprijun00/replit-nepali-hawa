@@ -248,8 +248,11 @@ export default function MapView() {
                     <p className="text-sm text-gray-600">{city.province}</p>
                   </div>
                   <div
-                    className="px-4 py-2 rounded-xl text-white font-bold text-lg shadow-lg"
-                    style={{ backgroundColor: aqiConfig.color }}
+                    className="px-4 py-2 rounded-xl font-bold text-lg shadow-lg"
+                    style={{ 
+                      backgroundColor: aqiConfig.color,
+                      color: aqiConfig.textColor
+                    }}
                   >
                     {city.airQuality.aqi}
                   </div>
