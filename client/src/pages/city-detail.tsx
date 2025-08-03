@@ -96,8 +96,8 @@ export default function CityDetail({ params }: CityDetailProps) {
           cityId: city.id,
           name: city.name,
           country: "Nepal",
-          latitude: city.city.latitude,
-          longitude: city.city.longitude,
+          latitude: city.latitude,
+          longitude: city.longitude,
           isCurrentLocation: false,
           order,
           createdAt: new Date().toISOString()
