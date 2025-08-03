@@ -16,6 +16,8 @@ export default function Favorites() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [showDeleteFor, setShowDeleteFor] = useState<string | null>(null);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
   const { data: favorites, isLoading: favoritesLoading } = useFavorites();
@@ -121,14 +123,60 @@ export default function Favorites() {
   };
 
   const handleLocationClick = (favorite: any) => {
-    if (favorite.cityId) {
-      // Nepal city - use city detail page
-      setLocation(`/city/${favorite.cityId}`);
-    } else {
-      // Worldwide location - use coordinates
-      setLocation(`/city/current-location?lat=${favorite.latitude}&lon=${favorite.longitude}`);
+    // Only navigate if not in delete mode
+    if (!showDeleteFor) {
+      if (favorite.cityId) {
+        // Nepal city - use city detail page
+        setLocation(`/city/${favorite.cityId}`);
+      } else {
+        // Worldwide location - use coordinates
+        setLocation(`/city/current-location?lat=${favorite.latitude}&lon=${favorite.longitude}`);
+      }
     }
   };
+
+  const handleLongPressStart = (favoriteId: string) => {
+    const timer = setTimeout(() => {
+      setShowDeleteFor(favoriteId);
+    }, 2000);
+    setLongPressTimer(timer);
+  };
+
+  const handleLongPressEnd = () => {
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+  };
+
+  const handleTouchStart = (favoriteId: string) => {
+    handleLongPressStart(favoriteId);
+  };
+
+  const handleTouchEnd = () => {
+    handleLongPressEnd();
+  };
+
+  const handleMouseDown = (favoriteId: string) => {
+    handleLongPressStart(favoriteId);
+  };
+
+  const handleMouseUp = () => {
+    handleLongPressEnd();
+  };
+
+  const handleMouseLeave = () => {
+    handleLongPressEnd();
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+      }
+    };
+  }, [longPressTimer]);
 
   if (favoritesLoading) {
     return (
@@ -276,22 +324,51 @@ export default function Favorites() {
               };
 
               return (
-                <div key={favorite.id} className="relative">
+                <div 
+                  key={favorite.id} 
+                  className="relative"
+                  onTouchStart={() => handleTouchStart(favorite.id)}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseDown={() => handleMouseDown(favorite.id)}
+                  onMouseUp={handleMouseUp}
+                  onMouseLeave={handleMouseLeave}
+                >
                   <CityCard
                     city={mockCity}
                     onCityClick={() => handleLocationClick(favorite)}
                   />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent card click
-                      handleDeleteFavorite(favorite.id, favorite.name);
-                    }}
-                    className="absolute top-2 right-2 h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50 z-10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  
+                  {/* Delete button - only show when in delete mode for this card */}
+                  {showDeleteFor === favorite.id && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-xl flex items-center justify-center z-20">
+                      <div className="flex space-x-4">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteFavorite(favorite.id, favorite.name);
+                            setShowDeleteFor(null);
+                          }}
+                          className="flex items-center space-x-2"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span>Delete</span>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowDeleteFor(null);
+                          }}
+                          className="bg-white"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}
