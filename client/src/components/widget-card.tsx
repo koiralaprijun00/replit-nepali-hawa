@@ -72,11 +72,11 @@ export function WidgetCard({ city, isCurrentLocation = false, onViewDetails }: W
         
         {city.airQuality?.aqi && (
           <Badge 
-            className={`font-bold rounded-md ${isCurrentLocation ? 'text-sm min-w-[60px] h-8' : 'text-xs min-w-[50px] h-7'}`}
+            className={`font-bold rounded-md ${isCurrentLocation ? 'text-lg min-w-[70px] h-10' : 'text-xs min-w-[50px] h-7'}`}
             style={isCurrentLocation ? { 
-              backgroundColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.2)'),
+              backgroundColor: hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.08)'),
               color: aqiLevel.color,
-              border: `2px solid ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.3)')}`
+              border: `1px solid ${hslToRgb(aqiLevel.color).replace('rgb(', 'rgba(').replace(')', ', 0.25)')}`
             } : { 
               backgroundColor: aqiLevel.color,
               color: aqiLevel.textColor 
