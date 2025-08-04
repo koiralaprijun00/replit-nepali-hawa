@@ -1,0 +1,69 @@
+
+Type to search
+PWABuilder Logo
+PWA Starter
+Quick Start
+Prerequisites
+Installing the CLI
+Start a New App
+Deploy Locally
+Next Steps
+CLI Usage
+Routing
+Service Workers
+Publish Your PWA
+Tech Overview
+FAQ
+New blog post! See how to enable in-app purchases on iOS in your PWA!
+Our latest post, You Won’t Believe How We Enabled In-App Purchases for PWAs on iOS, demonstrates what it takes to get iOS in-app purchases working on a Progressive Web App. Go check it out!
+PWA Starter Quick Start
+You can start with the PWA Starter by using the PWABuilder CLI, which allows you to create a fresh, templated progressive web app (PWA) project in just few seconds.
+
+Prerequisites
+The only prerequisite for using the PWA Starter and the PWABuilder CLI is Node.js and npm.
+
+We also recommend using Git and some sort of code editor, such as VSCode, but these are not required.
+
+Installing the CLI
+Using npm, you can install the PWA Builder CLI with this command:
+
+npm i -g @pwabuilder/cli
+Copy to clipboardErrorCopied
+Note The -g flag installs the CLI globally, so that you can use it from anywhere. If you only want the CLI to be accessible from your project directory, run the same command without the -g flag.
+
+Once you have installed the CLI, you can use it to create a new progressive web app.
+
+Note Optionally, you can run the CLI without installing it using npx. Guidance on how to do this is included below.
+
+Start a New App
+To start a new app using the CLI:
+
+If you have installed the CLI, run the create command and provide a name for your app:
+pwa create <app-name-here>
+Copy to clipboardErrorCopied
+If you are using NPX, you can run the same command like so:
+npx @pwabuilder/cli create <app-name-here>
+Copy to clipboardErrorCopied
+After you hit enter, the CLI will fetch the template for you and install all npm dependencies.
+Once the process completes, you can start developing on your PWA. If you want to learn how to add content to your new app, check out this article
+
+Deploy Locally
+Deploying your PWA locally is easy with the PWABuilder CLI.
+
+From the root of your project, just run:
+
+pwa start
+Copy to clipboardErrorCopied
+Your progressive web app will then open in a new browser window.
+
+Next Steps
+Learn how to use the CLI in depth
+
+Learn how to add content to your PWA
+
+Learn more about the service worker in the PWA Starter
+
+Learn how to deploy your PWA to the web
+
+Learn more about the technical structure of the starter
+
