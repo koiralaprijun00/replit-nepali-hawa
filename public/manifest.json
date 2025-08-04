@@ -1,4 +1,5 @@
 {
+  "id": "nepal-air-quality-monitor",
   "name": "Nepal Air Quality Monitor",
   "short_name": "AirQuality",
   "description": "Real-time air quality monitoring for Nepal cities with EPA AQI standards",
@@ -10,6 +11,27 @@
   "categories": ["weather", "utilities", "health"],
   "lang": "en",
   "scope": "/",
+  "dir": "ltr",
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Nepal Air Quality Monitor - Wide view"
+    },
+    {
+      "src": "/icon-384.png",
+      "sizes": "384x384", 
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Nepal Air Quality Monitor - Mobile view"
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192.png",
