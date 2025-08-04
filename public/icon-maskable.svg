@@ -1,0 +1,34 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Safe area background -->
+  <circle cx="256" cy="256" r="256" fill="#3b82f6"/>
+  
+  <!-- Main content within safe area (80% of total) -->
+  <g transform="translate(51.2, 51.2) scale(0.8)">
+    <!-- Air Quality Indicator Circle -->
+    <circle cx="256" cy="256" r="180" fill="#ffffff" opacity="0.2"/>
+    <circle cx="256" cy="256" r="140" fill="#ffffff" opacity="0.3"/>
+    <circle cx="256" cy="256" r="100" fill="#ffffff" opacity="0.4"/>
+    
+    <!-- Central AQI Display -->
+    <circle cx="256" cy="256" r="80" fill="#ffffff"/>
+    
+    <!-- AQI Text -->
+    <text x="256" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#3b82f6">AQI</text>
+    <text x="256" y="280" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="600" fill="#6b7280">42</text>
+    
+    <!-- Nepal Mountain Silhouette -->
+    <path d="M120 350 L140 320 L160 340 L180 300 L200 320 L220 280 L240 300 L260 260 L280 280 L300 240 L320 260 L340 220 L360 240 L380 200 L392 220 L392 350 Z" fill="#ffffff" opacity="0.8"/>
+    
+    <!-- Wind/Air Flow Lines -->
+    <g stroke="#ffffff" stroke-width="3" fill="none" opacity="0.6">
+      <path d="M80 180 Q120 160 160 180"/>
+      <path d="M90 200 Q130 180 170 200"/>
+      <path d="M352 180 Q392 160 432 180"/>
+      <path d="M342 200 Q382 180 422 200"/>
+    </g>
+    
+    <!-- Location Pin -->
+    <circle cx="256" cy="160" r="8" fill="#ef4444"/>
+    <path d="M256 140 C266 140 274 148 274 158 C274 168 256 180 256 180 S238 168 238 158 C238 148 246 140 256 140 Z" fill="#ef4444"/>
+  </g>
+</svg>
