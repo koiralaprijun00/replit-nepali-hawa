@@ -1,0 +1,39 @@
+flutter_native_splash:
+  # App logo/icon configuration
+  image: assets/icons/splash_logo.png
+  
+  # Background configuration
+  color: "10B981"              # Primary green color (without #)
+  color_dark: "065F46"         # Dark green for dark mode
+  
+  # Logo size and positioning
+  image_dark: assets/icons/splash_logo_dark.png  # Optional dark mode logo
+  fill: true                   # Fill the entire screen
+  
+  # Android configuration
+  android: true
+  android_gravity: center
+  android_12: true            # Android 12+ splash screen support
+  
+  # iOS configuration  
+  ios: true
+  ios_content_mode: center
+  
+  # Web configuration
+  web: true
+  web_image_mode: center
+  
+  # Remove splash screen after app loads
+  remove_after_launch: true
+  
+  # Branding configuration
+  branding: assets/icons/branding.png
+  branding_mode: bottom
+  branding_dark: assets/icons/branding_dark.png
+  
+  # Full screen splash (edge to edge)
+  fullscreen: true
+  
+  # Info.plist updates for iOS
+  info_plist_files:
+    - 'ios/Runner/Info.plist'

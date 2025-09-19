@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simple air/wind icon for splash -->
+  <g transform="translate(100, 100)">
+    <!-- Wind lines -->
+    <path d="M-60 -30 L60 -30" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+    <path d="M-45 0 L45 0" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+    <path d="M-60 30 L60 30" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+    
+    <!-- Air quality indicators -->
+    <circle cx="0" cy="-30" r="6" fill="#FFFFFF"/>
+    <circle cx="15" cy="0" r="6" fill="#FFFFFF" opacity="0.8"/>  
+    <circle cx="0" cy="30" r="6" fill="#FFFFFF" opacity="0.6"/>
+  </g>
+</svg>
